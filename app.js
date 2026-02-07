@@ -413,11 +413,11 @@ const Handlers = {
     
     setTimeout(() => {
       SoundSystem.play('love');
-    }, 1000);
+    }, 750);
     
     setTimeout(() => {
       SceneManager.show('transition');
-    }, 1500);
+    }, 1000);
     
     setTimeout(() => {
       Effects.hideGlow();

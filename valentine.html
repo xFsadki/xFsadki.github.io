@@ -1,0 +1,169 @@
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sois ma Valentine 💖</title>
+  <meta name="description" content="Une surprise romantique pour la Saint-Valentin avec un jeu de labyrinthe" />
+  <link rel="icon" href="/favicon.ico" />
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Floating Hearts Background -->
+  <div id="floating-hearts" class="floating-hearts-container"></div>
+
+  <!-- Heart Burst Effect -->
+  <div id="heart-burst" class="heart-burst-container"></div>
+
+  <!-- Glow Effect -->
+  <div id="glow-effect" class="glow-effect hidden"></div>
+
+  <!-- Mute Button -->
+  <button id="mute-btn" class="mute-btn" aria-label="Toggle sound">
+    <span id="mute-icon">🔊</span>
+  </button>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    
+    <!-- Intro Scene -->
+    <section id="intro-scene" class="scene">
+      <!-- Teddy Bear -->
+      <div id="teddy-container" class="teddy-container">
+        <svg id="teddy-bear" class="teddy-bear" viewBox="0 0 200 200" width="180" height="180">
+          <!-- Left Ear -->
+          <circle cx="45" cy="45" r="28" fill="hsl(25, 35%, 65%)" />
+          <circle cx="45" cy="45" r="18" fill="hsl(25, 40%, 75%)" />
+          <!-- Right Ear -->
+          <circle cx="155" cy="45" r="28" fill="hsl(25, 35%, 65%)" />
+          <circle cx="155" cy="45" r="18" fill="hsl(25, 40%, 75%)" />
+          <!-- Head -->
+          <circle cx="100" cy="85" r="60" fill="hsl(25, 35%, 65%)" />
+          <!-- Muzzle -->
+          <ellipse cx="100" cy="105" rx="25" ry="20" fill="hsl(25, 40%, 75%)" />
+          <!-- Left Eye -->
+          <circle id="left-eye" cx="75" cy="75" r="8" fill="hsl(25, 20%, 20%)" />
+          <circle cx="77" cy="73" r="3" fill="white" opacity="0.8" />
+          <!-- Right Eye -->
+          <circle id="right-eye" cx="125" cy="75" r="8" fill="hsl(25, 20%, 20%)" />
+          <circle cx="127" cy="73" r="3" fill="white" opacity="0.8" />
+          <!-- Nose -->
+          <ellipse cx="100" cy="95" rx="8" ry="6" fill="hsl(350, 60%, 45%)" />
+          <!-- Mouth -->
+          <path id="teddy-mouth" d="M 90 108 Q 100 118 110 108" stroke="hsl(25, 20%, 25%)" stroke-width="2" fill="none" stroke-linecap="round" />
+          <!-- Blush -->
+          <ellipse cx="65" cy="95" rx="10" ry="6" fill="hsl(350, 80%, 80%)" opacity="0.5" />
+          <ellipse cx="135" cy="95" rx="10" ry="6" fill="hsl(350, 80%, 80%)" opacity="0.5" />
+          <!-- Body -->
+          <ellipse cx="100" cy="165" r="45" fill="hsl(25, 35%, 65%)" />
+          <!-- Belly -->
+          <ellipse cx="100" cy="180" rx="45" ry="35" fill="hsl(25, 40%, 75%)" />
+          <!-- Heart on belly -->
+          <text id="belly-heart" x="100" y="172" text-anchor="middle" font-size="20" class="belly-heart">💕</text>
+          <!-- Arms -->
+          <ellipse id="left-arm" cx="55" cy="155" rx="15" ry="25" fill="hsl(25, 35%, 65%)" transform="rotate(-20 55 155)" />
+          <ellipse id="right-arm" cx="145" cy="155" rx="15" ry="25" fill="hsl(25, 35%, 65%)" transform="rotate(20 145 155)" />
+        </svg>
+      </div>
+
+      <!-- Question -->
+      <div class="intro-text">
+        <h1 class="title">Myriam, veux-tu être ma Valentine ?</h1>
+      </div>
+
+      <!-- Buttons -->
+      <div class="button-container">
+        <button id="yes-btn" class="btn-romantic btn-yes">Oui 💖</button>
+        <button id="no-btn" class="btn-romantic btn-no">Non 🙃</button>
+      </div>
+    </section>
+
+    <!-- Transition Scene -->
+    <section id="transition-scene" class="scene hidden">
+      <div class="teddy-container">
+        <svg class="teddy-bear teddy-love" viewBox="0 0 200 200" width="180" height="180">
+          <circle cx="45" cy="45" r="28" fill="hsl(25, 35%, 65%)" />
+          <circle cx="45" cy="45" r="18" fill="hsl(25, 40%, 75%)" />
+          <circle cx="155" cy="45" r="28" fill="hsl(25, 35%, 65%)" />
+          <circle cx="155" cy="45" r="18" fill="hsl(25, 40%, 75%)" />
+          <circle cx="100" cy="85" r="60" fill="hsl(25, 35%, 65%)" />
+          <ellipse cx="100" cy="105" rx="25" ry="20" fill="hsl(25, 40%, 75%)" />
+          <!-- Heart Eyes -->
+          <text x="75" y="82" text-anchor="middle" font-size="18">💖</text>
+          <text x="125" y="82" text-anchor="middle" font-size="18">💖</text>
+          <ellipse cx="100" cy="95" rx="8" ry="6" fill="hsl(350, 60%, 45%)" />
+          <path d="M 88 108 Q 100 122 112 108" stroke="hsl(25, 20%, 25%)" stroke-width="2.5" fill="none" stroke-linecap="round" />
+          <ellipse cx="65" cy="95" rx="12" ry="8" fill="hsl(350, 80%, 75%)" opacity="0.7" />
+          <ellipse cx="135" cy="95" rx="12" ry="8" fill="hsl(350, 80%, 75%)" opacity="0.7" />
+          <ellipse cx="100" cy="165" r="45" fill="hsl(25, 35%, 65%)" />
+          <ellipse cx="100" cy="165" rx="30" ry="25" fill="hsl(25, 40%, 75%)" />
+          <text x="100" y="172" text-anchor="middle" font-size="24">💖</text>
+          <ellipse cx="55" cy="145" rx="15" ry="25" fill="hsl(25, 35%, 65%)" transform="rotate(15 55 145)" />
+          <ellipse cx="145" cy="145" rx="15" ry="25" fill="hsl(25, 35%, 65%)" transform="rotate(-15 145 145)" />
+        </svg>
+      </div>
+      <p class="transition-text">J'ai hâte qu'on partage notre vie ensemble</p>
+    </section>
+
+    <!-- Game Scene -->
+    <section id="game-scene" class="scene hidden">
+      <div class="game-header">
+        <h2 class="game-title">Regina m'a volé mon 💖</h2>
+        <p class="game-subtitle">Trouve-le dans ce labyrinthe !</p>
+      </div>
+
+      <!-- Difficulty Selector -->
+      <div id="difficulty-selector" class="difficulty-selector">
+        <span class="difficulty-label">Difficulté :</span>
+        <button class="difficulty-btn active" data-difficulty="easy">Facile</button>
+        <button class="difficulty-btn" data-difficulty="medium">Moyen</button>
+        <button class="difficulty-btn" data-difficulty="hard">Difficile</button>
+      </div>
+
+      <!-- Move Counter -->
+      <div class="move-counter">
+        🚶 <span id="move-count">0</span> pas
+      </div>
+
+      <!-- Maze Container -->
+      <div id="maze-container" class="maze-container"></div>
+
+      <!-- Controls -->
+      <div class="controls">
+        <p class="controls-hint">Flèches du clavier ou boutons</p>
+        <div class="controls-grid">
+          <div></div>
+          <button class="btn-control" data-dir="up">↑</button>
+          <div></div>
+          <button class="btn-control" data-dir="left">←</button>
+          <button class="btn-control" data-dir="down">↓</button>
+          <button class="btn-control" data-dir="right">→</button>
+        </div>
+        <button id="new-maze-btn" class="new-maze-btn">🔄 Nouveau Labyrinthe</button>
+      </div>
+    </section>
+
+    <!-- Win Scene -->
+    <section id="win-scene" class="scene hidden">
+      <div class="win-heart">💖</div>
+      <h2 class="win-title">Tu as trouvé mon cœur !</h2>
+      <p class="win-moves">Terminé en <span id="final-moves">0</span> pas 💕</p>
+      <p class="win-message">Joyeuse Saint-Valentin en avance mais fuyons, elle est au courant !!</p>
+      <div class="tenor-gif-embed" data-postid="22286776" data-share-method="host" data-aspect-ratio="1.33333" data-width="100%"><a href="https://tenor.com/view/lana-parrilla-regina-mills-evil-queen-ouat-once-upon-a-time-gif-22286776">Lana Parrilla Regina Mills GIF</a>from <a href="https://tenor.com/search/lana+parrilla-gifs">Lana Parrilla GIFs</a></div> <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
+      <div class="win-emojis">
+        <span style="animation-delay: 0s">💕</span>
+        <span style="animation-delay: 0.2s">💖</span>
+        <span style="animation-delay: 0.4s">💗</span>
+        <span style="animation-delay: 0.6s">💓</span>
+        <span style="animation-delay: 0.8s">💝</span>
+      </div>
+      <button id="play-again-btn" class="btn-romantic btn-yes">Nouveau Labyrinthe 💕</button>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">Fait avec 💖 pour toi</footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

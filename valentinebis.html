@@ -1,0 +1,50 @@
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sois mon Valentin 💖</title>
+  <meta name="description" content="Une surprise romantique pour la Saint-Valentin avec un jeu de labyrinthe" />
+  <link rel="icon" href="/favicon.ico" />
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Floating Hearts Background -->
+  <div id="floating-hearts" class="floating-hearts-container"></div>
+
+  <!-- Heart Burst Effect -->
+  <div id="heart-burst" class="heart-burst-container"></div>
+
+  <!-- Glow Effect -->
+  <div id="glow-effect" class="glow-effect hidden"></div>
+
+  <!-- Mute Button -->
+  <button id="mute-btn" class="mute-btn" aria-label="Toggle sound">
+    <span id="mute-icon">🔊</span>
+  </button>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    
+    <!-- Intro Scene -->
+    <section id="intro-scene" class="scene">
+      <!-- Teddy Bear -->
+      <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.8.11/dist/dotlottie-wc.js" type="module"></script>
+    <dotlottie-wc src="https://lottie.host/dca8f293-c58b-4e85-9d2f-78ec35cebcd1/O9nVE8Akkz.lottie" style="width: 300px;height: 300px; margin-bottom: -70px" autoplay loop></dotlottie-wc>
+
+      <!-- Question -->
+      <div class="intro-text">
+        <h1 class="title">Abishan, veux-tu être mon Valentin ?</h1>
+      </div>
+
+      <!-- Buttons -->
+      <div class="button-container">
+        <button id="yes-btn" class="btn-romantic btn-yes">Oui 💖</button>
+        <button id="no-btn" class="btn-romantic btn-no">Non 🙃</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="appbis.js"></script>
+</body>
+</html>

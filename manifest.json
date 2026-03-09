@@ -1,0 +1,17 @@
+{
+  "name": "Séries · Wordle",
+  "short_name": "Wordle Séries",
+  "description": "Devine les mots de tes séries préférées",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0c0c0e",
+  "theme_color": "#0c0c0e",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' fill='%230c0c0e'/><text x='50%' y='58%' font-size='280' text-anchor='middle' dominant-baseline='middle' fill='%23c9a96e'>W</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}

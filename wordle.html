@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
@@ -11,968 +10,1211 @@
 <title>Séries · Wordle</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:#0c0c0e!important;color:#f0ede8!important;font-family:-apple-system,'Helvetica Neue',Arial,sans-serif;overflow:hidden;position:fixed;width:100%;-webkit-text-size-adjust:100%}
 
-html,body{
-height:100%;background:#0c0c0e!important;color:#f0ede8!important;
-font-family:-apple-system,‘Helvetica Neue’,Arial,sans-serif;
-overflow:hidden;position:fixed;width:100%;-webkit-text-size-adjust:100%
-}
-
-/* ── SCREENS ── */
-.screen{display:none;flex-direction:column;height:100dvh;width:100%;background:#0c0c0e;overflow:hidden}
+/* SCREENS */
+.screen{display:none;flex-direction:column;height:100dvh;width:100%;background:#0c0c0e}
 .screen.active{display:flex}
-.scroll-screen{overflow-y:auto;-webkit-overflow-scrolling:touch}
 
-/* ── INTRO ── */
-#screen-intro{align-items:center;justify-content:space-between;padding:56px 28px 44px}
-.intro-logo{font-family:Georgia,serif;font-size:52px;font-weight:300;color:#f0ede8;letter-spacing:-1px;line-height:1;margin-bottom:6px}
-.intro-tagline{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:#c9a96e;margin-bottom:40px}
-.intro-rules{width:100%;display:flex;flex-direction:column;gap:16px}
-.intro-rule{display:flex;align-items:flex-start;gap:14px}
-.rule-tiles{display:flex;gap:3px;flex-shrink:0}
-.rule-tile{width:28px;height:28px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;border:1.5px solid #2a2a35;background:#181820;color:#f0ede8}
-.rule-tile.correct{background:#2d6e45;border-color:#2d6e45;color:#b8f0cc}
-.rule-tile.present{background:#b86d10;border-color:#b86d10;color:#ffe0a0}
-.rule-tile.absent{background:#6e1f1f;border-color:#6e1f1f;color:#ffb0b0}
-.rule-desc strong{display:block;font-size:12px;font-weight:600;color:#f0ede8;margin-bottom:1px}
-.rule-desc span{font-size:11px;color:#888899;line-height:1.4}
-.intro-bottom{width:100%}
-.intro-btn{width:100%;background:#c9a96e;color:#0c0c0e;font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;border:none;border-radius:14px;padding:18px;cursor:pointer;-webkit-appearance:none}
-.intro-btn:active{opacity:.8}
-.intro-subhint{text-align:center;font-size:10px;color:#888899;letter-spacing:1.5px;text-transform:uppercase;margin-top:12px}
+/* INTRO */
+#screen-intro{align-items:center;justify-content:space-between;padding:52px 28px 40px;overflow-y:auto}
+.intro-logo{font-family:Georgia,serif;font-size:54px;font-weight:300;color:#f0ede8;letter-spacing:-1px;line-height:1;margin-bottom:5px;text-align:center}
+.intro-tag{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:#c9a96e;margin-bottom:36px;text-align:center}
+.intro-rules{width:100%;display:flex;flex-direction:column;gap:14px;margin-bottom:36px}
+.intro-rule{display:flex;align-items:flex-start;gap:12px}
+.rtiles{display:flex;gap:3px;flex-shrink:0}
+.rtile{width:27px;height:27px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;border:1.5px solid #2a2a35;background:#181820;color:#f0ede8}
+.rtile.c{background:#2d6e45;border-color:#2d6e45;color:#b8f0cc}
+.rtile.p{background:#b86d10;border-color:#b86d10;color:#ffe0a0}
+.rtile.a{background:#6e1f1f;border-color:#6e1f1f;color:#ffb0b0}
+.rdesc strong{display:block;font-size:12px;font-weight:600;color:#f0ede8;margin-bottom:1px}
+.rdesc span{font-size:11px;color:#888899;line-height:1.4}
+.intro-cta{width:100%;background:#c9a96e;color:#0c0c0e;font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;border:none;border-radius:14px;padding:17px;cursor:pointer;-webkit-appearance:none}
+.intro-cta:active{opacity:.8}
+.intro-foot{text-align:center;font-size:10px;color:#888899;letter-spacing:1.5px;text-transform:uppercase;margin-top:10px}
 
-/* ── SELECT ── */
-#screen-select{align-items:center;padding:0 0 20px}
-.select-header{width:100%;padding:48px 28px 20px;text-align:center}
-.select-eyebrow{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:#c9a96e;margin-bottom:10px}
-.select-title{font-family:Georgia,serif;font-size:36px;font-weight:300;color:#f0ede8;margin-bottom:4px}
-.select-sub{font-size:11px;color:#888899;letter-spacing:1px}
-.series-list{width:100%;padding:0 20px;display:flex;flex-direction:column;gap:8px;overflow-y:auto;-webkit-overflow-scrolling:touch}
-.series-btn{width:100%;background:#181820;border:1px solid #2a2a35;border-radius:14px;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;-webkit-appearance:none;transition:border-color .2s}
-.series-btn:active{border-color:#c9a96e;background:#1e1e28}
-.series-btn.done{border-color:#2d6e45}
-.series-btn.all-done{border-color:#c9a96e}
-.series-btn-left{text-align:left;flex:1}
-.series-btn-name{font-family:Georgia,serif;font-size:18px;color:#f0ede8}
-.series-btn-sub{font-size:10px;letter-spacing:1px;color:#888899;text-transform:uppercase;margin-top:3px}
-.series-btn-right{display:flex;align-items:center;gap:8px;flex-shrink:0;margin-left:12px}
-.series-badge{font-size:16px}
-.series-btn-arrow{color:#c9a96e;font-size:16px;opacity:.6}
+/* SELECT */
+#screen-select{overflow-y:auto;-webkit-overflow-scrolling:touch}
+.sel-top{padding:44px 20px 12px;display:flex;align-items:center;justify-content:space-between}
+.sel-top-left{display:flex;flex-direction:column}
+.sel-date{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#c9a96e;margin-bottom:3px}
+.sel-title{font-family:Georgia,serif;font-size:26px;color:#f0ede8}
+.sel-top-right{display:flex;gap:8px}
+.icon-btn{width:36px;height:36px;background:#181820;border:1px solid #2a2a35;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;cursor:pointer;-webkit-appearance:none;border:none}
+.icon-btn:active{background:#2a2a35}
+.day-progress{margin:0 20px 16px;background:#181820;border-radius:12px;padding:12px 14px;border:1px solid #2a2a35}
+.day-prog-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#888899;margin-bottom:8px}
+.day-prog-bar{height:6px;background:#2a2a35;border-radius:3px;overflow:hidden}
+.day-prog-fill{height:100%;background:#c9a96e;border-radius:3px;transition:width .4s ease}
+.day-prog-nums{font-size:11px;color:#888899;margin-top:5px;text-align:right}
+.diff-row{display:flex;gap:6px;padding:0 20px 14px}
+.dc{flex:1;padding:9px 4px;background:#181820;border:1px solid #2a2a35;border-radius:10px;font-size:10px;color:#888899;letter-spacing:.5px;cursor:pointer;-webkit-appearance:none;transition:all .15s;line-height:1.4;text-align:center}
+.dc.on{background:#c9a96e;border-color:#c9a96e;color:#0c0c0e;font-weight:700}
+.dc:active{opacity:.7}
+.series-list{padding:0 20px;display:flex;flex-direction:column;gap:8px}
+.sbtn{width:100%;background:#181820;border:1px solid #2a2a35;border-radius:14px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;-webkit-appearance:none;transition:border-color .2s}
+.sbtn:active{border-color:#c9a96e;background:#1e1e28}
+.sbtn.won{border-color:#2d6e4566}
+.sbtn.lost{border-color:#6e1f1f66}
+.sname{font-family:Georgia,serif;font-size:17px;color:#f0ede8;text-align:left}
+.ssub{font-size:10px;letter-spacing:.5px;color:#888899;margin-top:3px;text-align:left}
+.sbadge{font-size:18px;margin-right:4px}
+.sarrow{color:#c9a96e;font-size:16px;opacity:.6}
+.gts-entry{margin:10px 20px 0;padding:14px 16px;background:#181820;border:1px solid #c9a96e22;border-radius:14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;-webkit-appearance:none}
+.gts-entry:active{border-color:#c9a96e55}
+.gts-ename{font-family:Georgia,serif;font-size:17px;color:#f0ede8}
+.gts-esub{font-size:10px;color:#888899;margin-top:3px}
+.sel-foot{height:20px}
 
-/* Difficulty picker on select screen */
-.diff-bar{display:flex;gap:6px;padding:0 20px;margin-bottom:4px;width:100%}
-.diff-chip{flex:1;padding:8px 4px;background:#181820;border:1px solid #2a2a35;border-radius:10px;font-size:11px;color:#888899;letter-spacing:.5px;cursor:pointer;-webkit-appearance:none;transition:all .15s}
-.diff-chip.active{background:#c9a96e;border-color:#c9a96e;color:#0c0c0e;font-weight:700}
-.diff-chip:active{opacity:.7}
-.diff-label{font-size:9px;text-align:center;color:#888899;letter-spacing:2px;text-transform:uppercase;padding:0 20px;margin-bottom:10px;width:100%}
-
-/* Stats button */
-.stats-btn{background:transparent;border:none;color:#888899;font-size:22px;cursor:pointer;padding:4px}
-
-/* ── GAME ── */
+/* GAME */
 #screen-game{flex-direction:column}
-.game-header{padding:12px 16px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #2a2a35;flex-shrink:0}
-.header-back{width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#888899;font-size:20px;border-radius:8px}
-.header-back:active{color:#f0ede8}
-.header-center{text-align:center;flex:1}
-.header-series{font-family:Georgia,serif;font-size:16px;color:#f0ede8;line-height:1}
-.header-date{font-size:9px;letter-spacing:2px;color:#888899;text-transform:uppercase;margin-top:2px}
-.header-right{width:36px;display:flex;align-items:center;justify-content:center}
-.hint-btn{width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;border-radius:8px}
-.hint-btn:active{background:#2a2a35}
-
-.game-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 16px;gap:10px;overflow:hidden}
-.theme-hint{font-size:11px;color:#888899;text-align:center;letter-spacing:.3px;line-height:1.4;padding:0 8px;max-width:320px;font-style:italic}
-.diff-badge{display:inline-block;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:3px 8px;border-radius:20px;margin-top:4px}
-.diff-badge.easy{background:rgba(45,110,69,.2);color:#b8f0cc}
-.diff-badge.normal{background:rgba(201,169,110,.15);color:#c9a96e}
-.diff-badge.hard{background:rgba(110,31,31,.3);color:#ffb0b0}
-
+.ghdr{padding:11px 14px 9px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #2a2a35;flex-shrink:0}
+.gbk{width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#888899;font-size:19px;border-radius:8px}
+.gbk:active{color:#f0ede8}
+.gctr{text-align:center;flex:1}
+.gsname{font-family:Georgia,serif;font-size:15px;color:#f0ede8;line-height:1}
+.gdate{font-size:9px;letter-spacing:1.5px;color:#888899;text-transform:uppercase;margin-top:2px}
+.ghint-btn{width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:17px;cursor:pointer;border-radius:8px}
+.ghint-btn:active{background:#2a2a35}
+.gbody{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 14px;gap:8px;overflow:hidden}
+.thint{font-size:11px;color:#888899;text-align:center;font-style:italic;max-width:300px;line-height:1.4}
+.dbadge{display:inline-block;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;padding:2px 7px;border-radius:10px;margin-top:3px}
+.dbadge.easy{background:rgba(45,110,69,.2);color:#b8f0cc}
+.dbadge.normal{background:rgba(201,169,110,.15);color:#c9a96e}
+.dbadge.hard{background:rgba(110,31,31,.3);color:#ffb0b0}
 .grid{display:flex;flex-direction:column;gap:5px}
-.grid-row{display:flex;gap:5px}
-.grid-cell{width:52px;height:52px;border:1.5px solid #2a2a35;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#f0ede8;text-transform:uppercase;background:#181820;transition:border-color .1s}
-.grid-cell.filled{border-color:#888899}
-.grid-cell.active-row{border-color:#3a3a48}
-.grid-cell.correct{background:#2d6e45;border-color:#2d6e45;color:#b8f0cc}
-.grid-cell.present{background:#b86d10;border-color:#b86d10;color:#ffe0a0}
-.grid-cell.absent{background:#6e1f1f;border-color:#6e1f1f;color:#ffb0b0}
-.grid-cell.pop{animation:pop .1s ease}
-.grid-cell.shake{animation:shake .4s ease}
-.grid-cell.flip{animation:flip .35s ease forwards}
-@keyframes pop{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
+.grow{display:flex;gap:5px}
+.gcell{border:1.5px solid #2a2a35;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#f0ede8;text-transform:uppercase;background:#181820;transition:border-color .1s}
+.gcell.filled{border-color:#888899}
+.gcell.active{border-color:#3a3a48}
+.gcell.correct{background:#2d6e45;border-color:#2d6e45;color:#b8f0cc}
+.gcell.present{background:#b86d10;border-color:#b86d10;color:#ffe0a0}
+.gcell.absent{background:#6e1f1f;border-color:#6e1f1f;color:#ffb0b0}
+.gcell.pop{animation:pop .1s ease}
+.gcell.shake{animation:shake .4s ease}
+.gcell.flip{animation:flip .32s ease forwards}
+@keyframes pop{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
 @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
 @keyframes flip{0%{transform:rotateX(0)}50%{transform:rotateX(-90deg)}100%{transform:rotateX(0)}}
-
-.msg-bar{height:24px;display:flex;align-items:center;justify-content:center}
-.msg-text{font-size:11px;letter-spacing:1px;color:#c9a96e;opacity:0;transition:opacity .3s;text-transform:uppercase}
-.msg-text.show{opacity:1}
-
-/* Keyboard */
-.keyboard{width:100%;max-width:390px;display:flex;flex-direction:column;gap:7px;flex-shrink:0;padding:0 8px;padding-bottom:env(safe-area-inset-bottom,8px)}
-.key-row{display:flex;justify-content:center;gap:5px}
-.key{height:50px;min-width:28px;flex:1;max-width:38px;background:#1e1e26;border:none;border-radius:7px;color:#f0ede8;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;text-transform:uppercase;-webkit-appearance:none;user-select:none;transition:transform .1s}
-.key:active{transform:scale(.92)}
-.key.wide{max-width:52px;font-size:11px}
+.msgbar{height:22px;display:flex;align-items:center;justify-content:center}
+.msgtxt{font-size:11px;letter-spacing:1px;color:#c9a96e;opacity:0;transition:opacity .25s;text-transform:uppercase}
+.msgtxt.on{opacity:1}
+.kbd{width:100%;max-width:400px;display:flex;flex-direction:column;gap:6px;flex-shrink:0;padding:0 6px;padding-bottom:env(safe-area-inset-bottom,8px)}
+.krow{display:flex;justify-content:center;gap:4px}
+.key{height:48px;min-width:26px;flex:1;max-width:38px;background:#1e1e26;border:none;border-radius:7px;color:#f0ede8;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;text-transform:uppercase;-webkit-appearance:none;user-select:none;transition:transform .1s}
+.key:active{transform:scale(.91)}
+.key.wide{max-width:52px;font-size:10px}
 .key.correct{background:#2d6e45;color:#b8f0cc}
 .key.present{background:#b86d10;color:#ffe0a0}
 .key.absent{background:#6e1f1f;color:#ffb0b0}
 
-/* ── HINT OVERLAY ── */
-#hint-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;align-items:flex-end;justify-content:center}
-#hint-overlay.open{display:flex}
-.hint-sheet{width:100%;max-width:480px;background:#181820;border-radius:24px 24px 0 0;border-top:1px solid #2a2a35;padding:20px 20px 36px;animation:slideUp .25s ease}
-@keyframes slideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
-.hint-sheet-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-.hint-sheet-title{font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#c9a96e}
-.hint-close{width:28px;height:28px;background:#2a2a35;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#888899;font-size:14px}
-.hint-close:active{background:#3a3a45}
-.hint-letters{display:flex;flex-wrap:wrap;gap:8px}
-.hint-letter{width:44px;height:52px;border-radius:10px;background:#0c0c0e;border:1.5px solid #2a2a35;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;transition:border-color .15s,transform .1s}
-.hint-letter:active{transform:scale(.9)}
-.hint-letter.revealed{border-color:#c9a96e;background:rgba(201,169,110,.08)}
-.hint-letter-pos{font-size:10px;color:#888899}
-.hint-letter-char{font-size:18px;font-weight:700;color:#f0ede8;min-height:18px}
-.hint-letter.revealed .hint-letter-pos{color:#c9a96e}
-.hint-tip{margin-top:14px;font-size:11px;color:#888899;text-align:center;line-height:1.5}
+/* HINT SHEET */
+#hint-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:200;align-items:flex-end;justify-content:center}
+#hint-ov.on{display:flex}
+.hsheet{width:100%;max-width:480px;background:#181820;border-radius:22px 22px 0 0;border-top:1px solid #2a2a35;padding:18px 18px 36px;animation:su .22s ease}
+@keyframes su{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+.hsh-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.hsh-title{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#c9a96e}
+.hsh-close{width:26px;height:26px;background:#2a2a35;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#888899;font-size:13px}
+.hsh-close:active{background:#3a3a45}
+.hletters{display:flex;flex-wrap:wrap;gap:7px}
+.hletter{width:42px;height:50px;border-radius:10px;background:#0c0c0e;border:1.5px solid #2a2a35;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;transition:border-color .15s,transform .1s}
+.hletter:active{transform:scale(.9)}
+.hletter.rev{border-color:#c9a96e;background:rgba(201,169,110,.08)}
+.hlpos{font-size:9px;color:#888899}
+.hlchar{font-size:17px;font-weight:700;color:#f0ede8;min-height:17px}
+.hletter.rev .hlpos{color:#c9a96e}
+.htip{margin-top:12px;font-size:11px;color:#888899;text-align:center;line-height:1.5}
 
-/* ── GUESS THE SERIES ── */
+/* CONFIRM BACK */
+#confirm-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:200;align-items:center;justify-content:center;padding:28px}
+#confirm-ov.on{display:flex}
+.confirm-box{background:#181820;border:1px solid #2a2a35;border-radius:20px;padding:28px 24px;width:100%;max-width:340px;text-align:center}
+.confirm-title{font-family:Georgia,serif;font-size:22px;color:#f0ede8;margin-bottom:8px}
+.confirm-sub{font-size:13px;color:#888899;margin-bottom:24px;line-height:1.5}
+.confirm-btns{display:flex;flex-direction:column;gap:8px}
+.cbtn{width:100%;padding:14px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;-webkit-appearance:none;border:none}
+.cbtn.danger{background:#6e1f1f;color:#ffb0b0}
+.cbtn.safe{background:#2a2a35;color:#888899}
+.cbtn:active{opacity:.8}
+
+/* GTS */
 #screen-gts{flex-direction:column}
-.gts-header{padding:12px 16px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #2a2a35;flex-shrink:0}
-.gts-title-wrap{text-align:center;flex:1}
-.gts-title{font-family:Georgia,serif;font-size:16px;color:#f0ede8}
-.gts-sub{font-size:9px;letter-spacing:2px;color:#888899;text-transform:uppercase;margin-top:2px}
-.gts-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px 20px;gap:12px;overflow:hidden}
-.gts-word{font-family:Georgia,serif;font-size:42px;font-weight:300;color:#f0ede8;letter-spacing:4px;text-transform:uppercase}
-.gts-hint-text{font-size:12px;color:#888899;font-style:italic;text-align:center;max-width:280px}
+.gts-hdr{padding:12px 16px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #2a2a35;flex-shrink:0}
+.gts-htitle{font-family:Georgia,serif;font-size:16px;color:#f0ede8;text-align:center;flex:1}
+.gts-hsub{font-size:9px;letter-spacing:2px;color:#888899;text-transform:uppercase;text-align:center;margin-top:2px}
+.gts-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 20px;gap:14px;overflow:hidden}
+.gts-qnum{font-size:11px;letter-spacing:1px;color:#888899;text-transform:uppercase}
+.gts-qnum span{color:#c9a96e;font-weight:700}
+.gts-word{font-family:Georgia,serif;font-size:44px;font-weight:300;color:#f0ede8;letter-spacing:5px;text-transform:uppercase}
+.gts-hint{font-size:12px;color:#888899;font-style:italic;text-align:center;max-width:280px;line-height:1.5}
 .gts-choices{width:100%;max-width:360px;display:flex;flex-direction:column;gap:8px}
-.gts-choice{width:100%;padding:14px 18px;background:#181820;border:1px solid #2a2a35;border-radius:12px;font-size:15px;color:#f0ede8;font-family:Georgia,serif;cursor:pointer;-webkit-appearance:none;text-align:left;transition:border-color .15s}
-.gts-choice:active{border-color:#888899}
-.gts-choice.correct-ans{background:rgba(45,110,69,.2);border-color:#2d6e45;color:#b8f0cc}
-.gts-choice.wrong-ans{background:rgba(110,31,31,.2);border-color:#6e1f1f;color:#ffb0b0}
-.gts-score{font-size:13px;color:#888899;letter-spacing:1px}
-.gts-score span{color:#c9a96e;font-weight:600}
-.gts-next-btn{margin-top:8px;padding:14px 32px;background:#c9a96e;color:#0c0c0e;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;border:none;border-radius:12px;cursor:pointer;-webkit-appearance:none}
-.gts-next-btn:active{opacity:.8}
-.gts-result-wrap{display:flex;flex-direction:column;align-items:center;gap:10px}
-.gts-result-title{font-family:Georgia,serif;font-size:36px;color:#f0ede8}
-.gts-result-score{font-size:13px;color:#888899;letter-spacing:1px}
+.gchoice{width:100%;padding:14px 16px;background:#181820;border:1px solid #2a2a35;border-radius:12px;font-size:14px;color:#f0ede8;font-family:Georgia,serif;cursor:pointer;-webkit-appearance:none;text-align:left;transition:border-color .15s}
+.gchoice:active{opacity:.8}
+.gchoice.ok{background:rgba(45,110,69,.2);border-color:#2d6e45;color:#b8f0cc}
+.gchoice.ko{background:rgba(110,31,31,.2);border-color:#6e1f1f;color:#ffb0b0}
+.gts-next{padding:13px 28px;background:#c9a96e;color:#0c0c0e;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;border:none;border-radius:12px;cursor:pointer;-webkit-appearance:none}
+.gts-next:active{opacity:.8}
 
-/* ── END ── */
-#screen-end{align-items:center;justify-content:center;padding:40px 28px;gap:0}
-.end-eyebrow{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:#c9a96e;margin-bottom:14px}
-.end-title{font-family:Georgia,serif;font-size:44px;font-weight:300;color:#f0ede8;text-align:center;margin-bottom:6px}
-.end-word{font-size:12px;letter-spacing:3px;color:#888899;text-transform:uppercase;margin-bottom:28px}
-.end-stats{display:flex;gap:28px;margin-bottom:36px}
+/* END */
+#screen-end{align-items:center;justify-content:center;padding:36px 24px;gap:0;overflow-y:auto}
+.end-ey{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:#c9a96e;margin-bottom:12px}
+.end-ttl{font-family:Georgia,serif;font-size:42px;font-weight:300;color:#f0ede8;text-align:center;margin-bottom:6px}
+.end-word{font-size:11px;letter-spacing:3px;color:#888899;text-transform:uppercase;margin-bottom:18px}
+.end-grid{display:flex;flex-direction:column;gap:3px;margin-bottom:20px;align-items:center}
+.end-erow{display:flex;gap:3px}
+.end-ecell{width:20px;height:20px;border-radius:3px;background:#2a2a35}
+.end-ecell.correct{background:#2d6e45}
+.end-ecell.present{background:#b86d10}
+.end-ecell.absent{background:#6e1f1f}
+.end-stats{display:flex;gap:24px;margin-bottom:24px}
 .stat{text-align:center}
-.stat-num{font-family:Georgia,serif;font-size:38px;font-weight:300;color:#f0ede8;line-height:1}
-.stat-label{font-size:9px;letter-spacing:2px;color:#888899;text-transform:uppercase;margin-top:3px}
-.end-share{width:100%;max-width:280px;background:#c9a96e;color:#0c0c0e;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:15px;border-radius:12px;border:none;cursor:pointer;-webkit-appearance:none;margin-bottom:10px}
-.end-share:active{opacity:.8}
-.end-btn{width:100%;max-width:280px;background:transparent;border:1px solid #2a2a35;color:#888899;font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:13px;border-radius:12px;cursor:pointer;-webkit-appearance:none;margin-bottom:8px}
-.end-btn:active{border-color:#888899}
+.stat-n{font-family:Georgia,serif;font-size:36px;font-weight:300;color:#f0ede8;line-height:1}
+.stat-l{font-size:9px;letter-spacing:1.5px;color:#888899;text-transform:uppercase;margin-top:3px}
+.ebtn{width:100%;max-width:280px;padding:14px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;-webkit-appearance:none;border:none;margin-bottom:8px}
+.ebtn.gold{background:#c9a96e;color:#0c0c0e}
+.ebtn.ghost{background:transparent;border:1px solid #2a2a35;color:#888899}
+.ebtn:active{opacity:.8}
+.end-badge-notif{background:#181820;border:1px solid #c9a96e44;border-radius:12px;padding:10px 14px;margin-bottom:12px;text-align:center;width:100%;max-width:280px}
+.ebn-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#c9a96e;margin-bottom:4px}
+.ebn-badges{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.ebn-badge{font-size:22px}
 
-/* ── STATS SCREEN ── */
-#screen-stats{align-items:center;padding:0}
-.stats-header{width:100%;padding:48px 20px 20px;display:flex;align-items:center;justify-content:space-between}
-.stats-header-title{font-family:Georgia,serif;font-size:24px;color:#f0ede8}
-.stats-close{width:32px;height:32px;background:#2a2a35;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#888899;font-size:14px;flex-shrink:0}
+/* STATS */
+#screen-stats{overflow-y:auto;-webkit-overflow-scrolling:touch}
+.stats-hdr{padding:44px 20px 16px;display:flex;align-items:center;justify-content:space-between}
+.stats-htitle{font-family:Georgia,serif;font-size:24px;color:#f0ede8}
+.stats-close{width:30px;height:30px;background:#2a2a35;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#888899;font-size:13px}
 .stats-close:active{background:#3a3a45}
-.stats-body{width:100%;padding:0 20px 40px;overflow-y:auto;-webkit-overflow-scrolling:touch}
-.stats-section{margin-bottom:28px}
-.stats-section-title{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#c9a96e;margin-bottom:12px}
-.stats-global{display:flex;gap:16px;margin-bottom:8px}
-.stat-box{flex:1;background:#181820;border:1px solid #2a2a35;border-radius:12px;padding:14px 10px;text-align:center}
-.stat-box-num{font-family:Georgia,serif;font-size:28px;color:#f0ede8;line-height:1}
-.stat-box-label{font-size:9px;letter-spacing:1.5px;color:#888899;text-transform:uppercase;margin-top:4px;line-height:1.3}
-.stats-series-row{background:#181820;border:1px solid #2a2a35;border-radius:12px;padding:12px 14px;margin-bottom:8px}
-.stats-series-name{font-family:Georgia,serif;font-size:15px;color:#f0ede8;margin-bottom:8px}
-.stats-bars{display:flex;flex-direction:column;gap:4px}
-.stats-bar-row{display:flex;align-items:center;gap:8px}
-.stats-bar-label{font-size:11px;color:#888899;width:14px;text-align:right;flex-shrink:0}
-.stats-bar-fill{height:20px;min-width:6px;background:#2a2a35;border-radius:4px;display:flex;align-items:center;padding-left:6px;transition:width .4s ease}
-.stats-bar-fill.highlight{background:#2d6e45}
-.stats-bar-count{font-size:10px;color:#888899}
+.stats-body{padding:0 20px 48px}
+.ssec{margin-bottom:24px}
+.ssec-title{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#c9a96e;margin-bottom:10px}
+.sglobal{display:flex;gap:8px;flex-wrap:wrap}
+.sbox{flex:1;min-width:70px;background:#181820;border:1px solid #2a2a35;border-radius:12px;padding:12px 8px;text-align:center}
+.sbox-n{font-family:Georgia,serif;font-size:26px;color:#f0ede8;line-height:1}
+.sbox-l{font-size:9px;letter-spacing:1px;color:#888899;text-transform:uppercase;margin-top:3px;line-height:1.3}
+.sbar-row{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.sbar-lbl{font-size:11px;color:#888899;width:14px;text-align:right;flex-shrink:0}
+.sbar-fill{height:18px;min-width:6px;background:#2a2a35;border-radius:3px;display:flex;align-items:center;padding-left:5px;transition:width .5s ease}
+.sbar-fill.hi{background:#2d6e45}
+.sbar-cnt{font-size:9px;color:#888899}
+.sser-row{background:#181820;border:1px solid #2a2a35;border-radius:12px;padding:12px;margin-bottom:8px}
+.sser-name{font-family:Georgia,serif;font-size:14px;color:#f0ede8;margin-bottom:6px}
+.badges-grid{display:flex;flex-wrap:wrap;gap:8px}
+.badge-card{background:#181820;border:1px solid #2a2a35;border-radius:12px;padding:10px;display:flex;align-items:center;gap:10px;flex:1;min-width:140px}
+.badge-card.earned{border-color:#c9a96e44;background:rgba(201,169,110,.05)}
+.badge-icon{font-size:26px;flex-shrink:0}
+.badge-info strong{display:block;font-size:12px;color:#f0ede8;margin-bottom:2px}
+.badge-info span{font-size:10px;color:#888899;line-height:1.3}
+.badge-card.locked .badge-icon{filter:grayscale(1);opacity:.4}
+.badge-card.locked .badge-info strong{color:#888899}
 
-/* ── CONFETTI ── */
-#confetti-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999}
-
-/* ── BOTTOM NAV ── */
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#0c0c0e;border-top:1px solid #2a2a35;display:flex;padding:8px 0;padding-bottom:env(safe-area-inset-bottom,8px);z-index:50}
-.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;-webkit-appearance:none;background:none;border:none}
-.nav-btn:active{opacity:.7}
-.nav-icon{font-size:20px;line-height:1}
-.nav-label{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#888899}
-.nav-btn.active .nav-label{color:#c9a96e}
+/* CONFETTI */
+#cvs{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999}
 </style>
-
 </head>
 <body>
-<canvas id="confetti-canvas"></canvas>
+<canvas id="cvs"></canvas>
 
 <!-- INTRO -->
-
 <div id="screen-intro" class="screen active">
-  <div>
-    <div style="text-align:center">
-      <div class="intro-logo">Wordle</div>
-      <div class="intro-tagline">Séries · Un mot par jour</div>
+  <div style="text-align:center">
+    <div class="intro-logo">Wordle</div>
+    <div class="intro-tag">Séries · Un mot par jour</div>
+  </div>
+  <div class="intro-rules">
+    <div class="intro-rule">
+      <div class="rtiles"><div class="rtile c">B</div><div class="rtile">R</div><div class="rtile">O</div><div class="rtile">O</div><div class="rtile">K</div></div>
+      <div class="rdesc"><strong>Vert — Bonne lettre, bonne place</strong><span>La lettre est dans le mot et bien positionnée.</span></div>
     </div>
-    <div class="intro-rules">
-      <div class="intro-rule">
-        <div class="rule-tiles">
-          <div class="rule-tile correct">B</div><div class="rule-tile">R</div><div class="rule-tile">O</div><div class="rule-tile">O</div><div class="rule-tile">K</div>
-        </div>
-        <div class="rule-desc"><strong>Vert — Bonne lettre, bonne place</strong><span>La lettre est dans le mot et bien positionnée.</span></div>
-      </div>
-      <div class="intro-rule">
-        <div class="rule-tiles">
-          <div class="rule-tile">D</div><div class="rule-tile present">E</div><div class="rule-tile">A</div><div class="rule-tile">N</div>
-        </div>
-        <div class="rule-desc"><strong>Orange — Bonne lettre, mauvaise place</strong><span>La lettre est dans le mot mais mal positionnée.</span></div>
-      </div>
-      <div class="intro-rule">
-        <div class="rule-tiles">
-          <div class="rule-tile">S</div><div class="rule-tile">A</div><div class="rule-tile absent">M</div>
-        </div>
-        <div class="rule-desc"><strong>Rouge — Lettre absente</strong><span>La lettre n'est pas dans le mot.</span></div>
-      </div>
+    <div class="intro-rule">
+      <div class="rtiles"><div class="rtile">D</div><div class="rtile p">E</div><div class="rtile">A</div><div class="rtile">N</div></div>
+      <div class="rdesc"><strong>Orange — Bonne lettre, mauvaise place</strong><span>La lettre est dans le mot mais mal positionnée.</span></div>
+    </div>
+    <div class="intro-rule">
+      <div class="rtiles"><div class="rtile">S</div><div class="rtile">A</div><div class="rtile a">M</div></div>
+      <div class="rdesc"><strong>Rouge — Lettre absente</strong><span>La lettre n'est pas dans le mot.</span></div>
     </div>
   </div>
-  <div class="intro-bottom">
-    <button class="intro-btn" id="intro-play-btn">Jouer</button>
-    <div class="intro-subhint">6 essais · 5 séries · 1 mot par jour</div>
+  <div>
+    <button class="intro-cta" id="btn-intro">Jouer</button>
+    <div class="intro-foot">5 séries · Mots par difficulté · Badges</div>
   </div>
 </div>
 
 <!-- SELECT -->
-
-<div id="screen-select" class="screen scroll-screen">
-  <div class="select-header">
-    <div style="display:flex;align-items:center;justify-content:space-between">
-      <div style="width:32px"></div>
-      <div>
-        <div class="select-eyebrow">Devine le mot</div>
-        <div class="select-title">Séries</div>
-      </div>
-      <button class="stats-btn" id="open-stats-btn">📊</button>
+<div id="screen-select" class="screen" style="overflow-y:auto;-webkit-overflow-scrolling:touch">
+  <div class="sel-top">
+    <div class="sel-top-left">
+      <div class="sel-date" id="sel-date"></div>
+      <div class="sel-title">Choisir une série</div>
     </div>
-    <div class="select-sub" style="margin-top:4px">Un mot par jour · 6 essais</div>
+    <div class="sel-top-right">
+      <button class="icon-btn" id="btn-badges">🏅</button>
+      <button class="icon-btn" id="btn-stats">📊</button>
+    </div>
   </div>
-  <div class="diff-label">Difficulté</div>
-  <div class="diff-bar">
-    <button class="diff-chip" data-diff="easy">Facile<br><span style="font-size:9px;opacity:.7">8 essais</span></button>
-    <button class="diff-chip active" data-diff="normal">Normal<br><span style="font-size:9px;opacity:.7">6 essais</span></button>
-    <button class="diff-chip" data-diff="hard">Hardcore<br><span style="font-size:9px;opacity:.7">4 essais</span></button>
+  <div class="day-progress" id="day-progress">
+    <div class="day-prog-label">Progression du jour</div>
+    <div class="day-prog-bar"><div class="day-prog-fill" id="prog-fill" style="width:0%"></div></div>
+    <div class="day-prog-nums" id="prog-nums">0 / 0</div>
+  </div>
+  <div style="padding:0 20px 8px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#888899">Difficulté</div>
+  <div class="diff-row">
+    <button class="dc" data-d="easy">Facile<br><span style="font-size:9px;opacity:.7">8 essais · mots simples</span></button>
+    <button class="dc on" data-d="normal">Normal<br><span style="font-size:9px;opacity:.7">6 essais · mots variés</span></button>
+    <button class="dc" data-d="hard">Expert<br><span style="font-size:9px;opacity:.7">4 essais · mots rares</span></button>
   </div>
   <div class="series-list" id="series-list"></div>
-  <div style="padding:12px 20px;width:100%">
-    <button class="series-btn" id="gts-btn" style="border-color:#c9a96e22">
-      <div class="series-btn-left">
-        <div class="series-btn-name">🎭 Devine la série</div>
-        <div class="series-btn-sub">Trouve à quelle série appartient le mot</div>
-      </div>
-      <div class="series-btn-arrow">›</div>
+  <div style="padding:0 20px">
+    <button class="gts-entry" id="btn-gts" style="width:100%;border:none">
+      <div><div class="gts-ename">🎭 Devine la série</div><div class="gts-esub">Trouve à quelle série appartient le mot</div></div>
+      <div style="color:#c9a96e;font-size:16px;opacity:.6">›</div>
     </button>
   </div>
+  <div style="height:24px"></div>
 </div>
 
 <!-- GAME -->
-
 <div id="screen-game" class="screen">
-  <div class="game-header">
-    <div class="header-back" id="back-btn">←</div>
-    <div class="header-center">
-      <div class="header-series" id="header-series-name"></div>
-      <div class="header-date" id="header-date"></div>
+  <div class="ghdr">
+    <div class="gbk" id="btn-back">←</div>
+    <div class="gctr">
+      <div class="gsname" id="g-sname"></div>
+      <div class="gdate" id="g-date"></div>
     </div>
-    <div class="header-right"><div class="hint-btn" id="hint-btn">💡</div></div>
+    <div class="ghint-btn" id="btn-hint">💡</div>
   </div>
-  <div class="game-body">
-    <div class="theme-hint" id="theme-hint"></div>
+  <div class="gbody">
+    <div class="thint" id="g-hint"></div>
     <div class="grid" id="grid"></div>
-    <div class="msg-bar"><div class="msg-text" id="msg"></div></div>
+    <div class="msgbar"><div class="msgtxt" id="msg"></div></div>
   </div>
-  <div class="keyboard" id="keyboard"></div>
+  <div class="kbd" id="kbd"></div>
 </div>
 
-<!-- GUESS THE SERIES -->
-
+<!-- GTS -->
 <div id="screen-gts" class="screen">
-  <div class="gts-header">
-    <div class="header-back" id="gts-back-btn">←</div>
-    <div class="gts-title-wrap">
-      <div class="gts-title">🎭 Devine la série</div>
-      <div class="gts-sub">À quelle série appartient ce mot ?</div>
+  <div class="gts-hdr">
+    <div class="gbk" id="btn-gts-back">←</div>
+    <div style="flex:1;text-align:center">
+      <div class="gts-htitle">🎭 Devine la série</div>
+      <div class="gts-hsub">À quelle série appartient ce mot ?</div>
     </div>
     <div style="width:36px"></div>
   </div>
   <div class="gts-body">
-    <div class="gts-score">Question <span id="gts-q-num">1</span> / <span id="gts-q-total">10</span></div>
+    <div class="gts-qnum">Question <span id="gts-qn">1</span> / <span id="gts-qt">10</span></div>
     <div class="gts-word" id="gts-word"></div>
-    <div class="gts-hint-text" id="gts-hint-text"></div>
+    <div class="gts-hint" id="gts-hint"></div>
     <div class="gts-choices" id="gts-choices"></div>
-    <button class="gts-next-btn" id="gts-next-btn" style="display:none">Question suivante →</button>
+    <button class="gts-next" id="btn-gts-next" style="display:none">Suivant →</button>
   </div>
 </div>
 
 <!-- END -->
-
 <div id="screen-end" class="screen">
-  <div class="end-eyebrow" id="end-eyebrow"></div>
-  <div class="end-title" id="end-title"></div>
+  <div class="end-ey" id="end-ey"></div>
+  <div class="end-ttl" id="end-ttl"></div>
   <div class="end-word" id="end-word"></div>
+  <div class="end-grid" id="end-grid"></div>
   <div class="end-stats">
-    <div class="stat"><div class="stat-num" id="stat-attempts">0</div><div class="stat-label">Essais</div></div>
-    <div class="stat"><div class="stat-num" id="stat-streak">0</div><div class="stat-label">Série</div></div>
+    <div class="stat"><div class="stat-n" id="e-tries">0</div><div class="stat-l">Essais</div></div>
+    <div class="stat"><div class="stat-n" id="e-streak">0</div><div class="stat-l">Série</div></div>
+    <div class="stat"><div class="stat-n" id="e-total">0</div><div class="stat-l">Victoires</div></div>
   </div>
-  <button class="end-share" id="end-share-btn">📋 Partager le résultat</button>
-  <button class="end-btn" id="end-next-word-btn">Mot suivant →</button>
-  <button class="end-btn" id="end-back-btn">Choisir une série</button>
+  <div class="end-badge-notif" id="new-badges-box" style="display:none">
+    <div class="ebn-title">🏅 Nouveau badge !</div>
+    <div class="ebn-badges" id="new-badges-list"></div>
+  </div>
+  <button class="ebtn gold" id="btn-share">📋 Partager</button>
+  <button class="ebtn ghost" id="btn-next-word">Mot suivant →</button>
+  <button class="ebtn ghost" id="btn-end-back">Choisir une série</button>
 </div>
 
 <!-- STATS -->
-
 <div id="screen-stats" class="screen">
-  <div class="stats-header">
-    <div class="stats-header-title">Statistiques</div>
-    <div class="stats-close" id="stats-close-btn">✕</div>
+  <div class="stats-hdr">
+    <div class="stats-htitle">Statistiques</div>
+    <div class="stats-close" id="btn-stats-close">✕</div>
   </div>
   <div class="stats-body" id="stats-body"></div>
 </div>
 
-<!-- HINT OVERLAY -->
+<!-- BADGES -->
+<div id="screen-badges" class="screen">
+  <div class="stats-hdr">
+    <div class="stats-htitle">Badges</div>
+    <div class="stats-close" id="btn-badges-close">✕</div>
+  </div>
+  <div class="stats-body" id="badges-body"></div>
+</div>
 
-<div id="hint-overlay">
-  <div class="hint-sheet">
-    <div class="hint-sheet-header">
-      <div class="hint-sheet-title">💡 Indices lettre par lettre</div>
-      <div class="hint-close" id="hint-close">✕</div>
+<!-- HINT OVERLAY -->
+<div id="hint-ov">
+  <div class="hsheet">
+    <div class="hsh-hdr">
+      <div class="hsh-title">💡 Indices lettre par lettre</div>
+      <div class="hsh-close" id="btn-hint-close">✕</div>
     </div>
-    <div class="hint-letters" id="hint-letters"></div>
-    <div class="hint-tip">Appuie sur une position pour révéler la lettre</div>
+    <div class="hletters" id="hletters"></div>
+    <div class="htip">Appuie sur une position pour révéler la lettre</div>
+  </div>
+</div>
+
+<!-- CONFIRM BACK -->
+<div id="confirm-ov">
+  <div class="confirm-box">
+    <div class="confirm-title">Quitter la partie ?</div>
+    <div class="confirm-sub">Ta progression est sauvegardée, tu pourras reprendre plus tard.</div>
+    <div class="confirm-btns">
+      <button class="cbtn danger" id="btn-confirm-yes">Quitter</button>
+      <button class="cbtn safe" id="btn-confirm-no">Continuer à jouer</button>
+    </div>
   </div>
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════
-// DATA
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+// DATA — 3 niveaux de difficulté par série
+// easy: mots connus, 4-5 lettres simples
+// normal: mots variés, 4-7 lettres
+// hard: mots rares/longs, 6-7 lettres
+// ═══════════════════════════════════════════════
 const SERIES = [
-  { id:'scott', name:'Les Frères Scott', words:[
-    {w:'LUCAS',   h:'Personnage principal, frère Scott'},
-    {w:'PEYTON',  h:'Artiste torturée, amoureuse de Lucas'},
-    {w:'BROOKE',  h:'Pom-pom girl populaire, future styliste'},
-    {w:'HALEY',   h:'Meilleure amie de Lucas, chanteuse'},
-    {w:'SCOTT',   h:'Le nom de famille des deux frères'},
-    {w:'KAREN',   h:'La mère de Lucas, tient un café'},
-    {w:'MOUTH',   h:'Le commentateur sportif de l\'équipe'},
-    {w:'RACHEL',  h:'Rivale de Brooke, très manipulatrice'},
-    {w:'MATCH',   h:'Ce que les Ravens jouent chaque semaine'},
-    {w:'DANSE',   h:'Activité phare des pom-pom girls'},
-    {w:'KEITH',   h:'L\'oncle bienveillant de Lucas'},
-    {w:'LIVRE',   h:'Lucas en écrit un tout au long de la série'},
-    {w:'REVE',    h:'Ce que tous les personnages poursuivent'},
-    {w:'ARBRE',   h:'Lieu culte où tout le monde grave son nom'},
-    {w:'CHEER',   h:'Les encouragements des pom-pom girls'},
-    {w:'NATHAN',  h:'Le demi-frère de Lucas, basketteur'},
-    {w:'MUSIC',   h:'La passion d\'Haley et de Peyton'},
-    {w:'COUPE',   h:'Le trophée que visent les Ravens'},
-  ]},
-  { id:'ouat', name:'Once Upon a Time', words:[
-    {w:'EMMA',    h:'La Sauveur, fille de Blanche-Neige'},
-    {w:'REGINA',  h:'La Méchante Reine, maire de Storybrooke'},
-    {w:'MIROIR',  h:'Objet magique de la Méchante Reine'},
-    {w:'MAGIE',   h:'La force qui gouverne les contes de fées'},
-    {w:'POMME',   h:'Le fruit empoisonné de Blanche-Neige'},
-    {w:'FORET',   h:'Là où se déroulent les aventures enchantées'},
-    {w:'CHARME',  h:'Le prince de Blanche-Neige'},
-    {w:'PRINCE',  h:'Titre porté par plusieurs héros de la série'},
-    {w:'PIRATE',  h:'La profession du Capitaine Crochet'},
-    {w:'DRAGON',  h:'Forme que peut prendre Maleficent'},
-    {w:'REINE',   h:'Titre de Regina et de la Reine des Neiges'},
-    {w:'TEMPS',   h:'Rumplestiltskin peut le manipuler'},
-    {w:'CROCHET', h:'Le séduisant pirate allié d\'Emma'},
-    {w:'SORT',    h:'Ce que Regina lance sur les personnages'},
-    {w:'CONTE',   h:'Le genre de tous les personnages de la série'},
-    {w:'HENRY',   h:'Le fils adoptif de Regina, fils d\'Emma'},
-  ]},
-  { id:'riverdale', name:'Riverdale', words:[
-    {w:'ARCHIE',  h:'Le rouquin au cœur tendre, fils de Fred'},
-    {w:'BETTY',   h:'La blonde perfectionniste, journaliste'},
-    {w:'CHERYL',  h:'La Blossom aux cheveux rouges, reine du lycée'},
-    {w:'JASON',   h:'Le frère de Cheryl retrouvé mort'},
-    {w:'LODGE',   h:'Le nom de famille de Veronica'},
-    {w:'COOPER',  h:'Le nom de famille de Betty'},
-    {w:'BANDE',   h:'Archie en forme une de musique'},
-    {w:'MAPLE',   h:'La boisson sucrée emblématique de Riverdale'},
-    {w:'VIPER',   h:'Le gang de Jughead'},
-    {w:'KEVIN',   h:'Le meilleur ami de Betty, fils du shérif'},
-    {w:'NUIT',    h:'La plupart des mystères se déroulent la…'},
-    {w:'CRIME',   h:'Le moteur de tous les arcs narratifs'},
-    {w:'PROM',    h:'La soirée de fin d\'année au lycée'},
-    {w:'JOSIE',   h:'La chanteuse des Pussycats'},
-  ]},
-  { id:'charmed', name:'Charmed', words:[
-    {w:'PIPER',   h:'La sœur du milieu, gèle le temps'},
-    {w:'PHOEBE',  h:'La plus jeune, a des prémonitions'},
-    {w:'PAIGE',   h:'La demi-sœur, déplace les objets'},
-    {w:'PRUE',    h:'L\'aînée, disparaît en saison 3'},
-    {w:'POTION',  h:'Préparation magique des sœurs Halliwell'},
-    {w:'DEMON',   h:'L\'ennemi principal des sœurs'},
-    {w:'ORBE',    h:'La façon dont les Blanchisseurs se déplacent'},
-    {w:'WYATT',   h:'Le fils de Piper, très puissant'},
-    {w:'CHRIS',   h:'Le deuxième fils de Piper, vient du futur'},
-    {w:'LIVRE',   h:'Le grimoire des sœurs Halliwell'},
-    {w:'MAGIE',   h:'Le pouvoir transmis de génération en génération'},
-    {w:'NEXUS',   h:'Point de convergence des pouvoirs magiques'},
-    {w:'SORT',    h:'Formule prononcée pour activer un pouvoir'},
-    {w:'COLE',    h:'Le démon qui tombe amoureux de Phoebe'},
-    {w:'MANOR',   h:'La grande maison victorienne des Halliwell'},
-  ]},
-  { id:'supernatural', name:'Supernatural', words:[
-    {w:'DEAN',    h:'L\'aîné des Winchester, aime les voitures'},
-    {w:'SAM',     h:'Le cadet des Winchester, très grand'},
-    {w:'CASTIEL', h:'L\'ange ami des frères Winchester'},
-    {w:'BOBBY',   h:'Le père de substitution des frères'},
-    {w:'IMPALA',  h:'La voiture noire emblématique des frères'},
-    {w:'DEMON',   h:'La créature la plus courante chassée'},
-    {w:'ANGE',    h:'La nature de Castiel'},
-    {w:'CHASSE',  h:'L\'activité principale des frères Winchester'},
-    {w:'ENFER',   h:'Là où Dean est envoyé à la fin de la saison 3'},
-    {w:'CROIX',   h:'Objet utilisé contre vampires et démons'},
-    {w:'LANCE',   h:'Arme utilisée pour tuer certaines créatures'},
-    {w:'BUNKER',  h:'Le QG secret des Hommes de Lettres'},
-    {w:'MONSTRE', h:'Ce que les frères traquent chaque épisode'},
-    {w:'LUCIFER', h:'Le grand antagoniste des saisons 4 et 5'},
-    {w:'CROWLEY', h:'Le roi des enfers, allié inattendu'},
-    {w:'ARME',    h:'Les frères en collectionnent de nombreuses'},
-  ]},
+  { id:'scott', name:'Les Frères Scott', words:{
+    easy:[
+      {w:'LUCAS',  h:'Personnage principal, frère Scott'},
+      {w:'HALEY',  h:'Meilleure amie de Lucas, chanteuse'},
+      {w:'SCOTT',  h:'Le nom de famille des deux frères'},
+      {w:'KAREN',  h:'La mère de Lucas, tient un café'},
+      {w:'MATCH',  h:'Ce que les Ravens jouent chaque semaine'},
+      {w:'DANSE',  h:'Activité phare des pom-pom girls'},
+      {w:'KEITH',  h:'L\'oncle bienveillant de Lucas'},
+      {w:'LIVRE',  h:'Lucas en écrit un tout au long de la série'},
+      {w:'REVE',   h:'Ce que tous les personnages poursuivent'},
+      {w:'ARBRE',  h:'Lieu culte où tout le monde grave son nom'},
+      {w:'COUPE',  h:'Le trophée que visent les Ravens'},
+      {w:'NUIT',   h:'La ville de Tree Hill s\'anime souvent la…'},
+      {w:'MUSIC',  h:'La passion d\'Haley et de Peyton'},
+      {w:'PISTE',  h:'Là où s\'entraîne l\'équipe'},
+      {w:'BALLE',  h:'Objet central de chaque match'},
+    ],
+    normal:[
+      {w:'PEYTON',  h:'Artiste torturée, amoureuse de Lucas'},
+      {w:'BROOKE',  h:'Pom-pom girl populaire, future styliste'},
+      {w:'NATHAN',  h:'Le demi-frère de Lucas, basketteur'},
+      {w:'RACHEL',  h:'Rivale de Brooke, très manipulatrice'},
+      {w:'CHEER',   h:'Les encouragements des pom-pom girls'},
+      {w:'COUCHE',  h:'Les Ravens portent leur… de match'},
+      {w:'STADE',   h:'L\'antre des Ravens à Tree Hill'},
+      {w:'FILET',   h:'Ce qu\'on doit traverser au basket'},
+      {w:'LYCEE',   h:'Là où tout commence pour Lucas et Nathan'},
+      {w:'DESTIN',  h:'Ce que Lucas croit guider sa vie'},
+      {w:'TRAHIR',  h:'Ce que Dan fera toujours à ses proches'},
+      {w:'ROMAN',   h:'Le projet littéraire de Lucas'},
+      {w:'TALENT',  h:'Ce qu\'Haley révèle au monde'},
+      {w:'AMOUR',   h:'Le moteur de presque chaque épisode'},
+      {w:'BOURSE',  h:'L\'enjeu sportif de Nathan'},
+    ],
+    hard:[
+      {w:'CLINIQUE', h:'Là où plusieurs personnages finissent après un drame'},
+      {w:'TROPHEE',  h:'L\'objet que Dan convoite pour Nathan'},
+      {w:'GALLERY',  h:'La galerie d\'art que Peyton fonde'},
+      {w:'MUSIQUE',  h:'Ce qui rassemble tout le monde à Tree Hill'},
+      {w:'MENTOR',   h:'Le rôle que Keith joue pour Lucas'},
+      {w:'BLESSURE', h:'Nathan s\'en inflige une pour fuir sa vie'},
+      {w:'SECRETS',  h:'Ce que chaque personnage cache aux autres'},
+    ]
+  }},
+  { id:'ouat', name:'Once Upon a Time', words:{
+    easy:[
+      {w:'EMMA',   h:'La Sauveur, fille de Blanche-Neige'},
+      {w:'MAGIE',  h:'La force qui gouverne les contes de fées'},
+      {w:'POMME',  h:'Le fruit empoisonné de Blanche-Neige'},
+      {w:'SORT',   h:'Ce que Regina lance sur les personnages'},
+      {w:'REINE',  h:'Titre de Regina et de la Reine des Neiges'},
+      {w:'CONTE',  h:'Le genre de tous les personnages de la série'},
+      {w:'HENRY',  h:'Le fils adoptif de Regina, fils d\'Emma'},
+      {w:'FORET',  h:'Là où se déroulent les aventures enchantées'},
+      {w:'NAIN',   h:'Ami de Blanche-Neige, creuse des mines'},
+      {w:'FEE',    h:'Créature magique qui guide les héros'},
+      {w:'MIROIR', h:'Objet magique de la Méchante Reine'},
+      {w:'TEMPS',  h:'Rumplestiltskin peut le manipuler'},
+      {w:'PACTE',  h:'Ce que Rumple conclut avec tout le monde'},
+      {w:'PRINCE', h:'Titre porté par plusieurs héros de la série'},
+      {w:'TOUR',   h:'Là où Raiponce est enfermée'},
+    ],
+    normal:[
+      {w:'REGINA',  h:'La Méchante Reine, maire de Storybrooke'},
+      {w:'CHARME',  h:'Le prince de Blanche-Neige'},
+      {w:'PIRATE',  h:'La profession du Capitaine Crochet'},
+      {w:'DRAGON',  h:'Forme que peut prendre Maleficent'},
+      {w:'CROCHET', h:'Le séduisant pirate allié d\'Emma'},
+      {w:'MALEDIC', h:'Ce que Regina jette sur le village'},
+      {w:'PORTAIL', h:'Ce qui permet de voyager entre les mondes'},
+      {w:'MALICE',  h:'Le sentiment qui anime la Méchante Reine'},
+      {w:'POTION',  h:'Préparation que Rumple vend à ses clients'},
+      {w:'BOUCLE',  h:'La façon dont le temps est piégé à Storybrooke'},
+      {w:'LOYAUTE', h:'Ce que les nains ont envers Blanche'},
+      {w:'DESTIN',  h:'Concept central lié à la prophétie d\'Emma'},
+      {w:'MONSTRE', h:'Forme que prennent certains ennemis'},
+      {w:'OMBRE',   h:'Ce que Peter Pan envoie comme messager'},
+      {w:'COEUR',   h:'Regina l\'arrache pour contrôler les gens'},
+    ],
+    hard:[
+      {w:'MALEFIQUE', h:'La grande sorcière qui peut prendre forme de dragon'},
+      {w:'ENCHANTE',  h:'La forêt où tout se passe avant Storybrooke'},
+      {w:'PROPHETE',  h:'Rôle de Rumple dans la grande histoire'},
+      {w:'SORCIERES', h:'Les créatures que l\'OAT combat en saison 4'},
+      {w:'TRIBUNAL',  h:'Là où Emma use de son pouvoir de vérité'},
+      {w:'FANTOME',   h:'La forme que prennent certains défunts'},
+      {w:'SACRIFICE', h:'Ce qu\'Emma doit accomplir pour briser le sort'},
+    ]
+  }},
+  { id:'riverdale', name:'Riverdale', words:{
+    easy:[
+      {w:'ARCHIE', h:'Le rouquin au cœur tendre, fils de Fred'},
+      {w:'BETTY',  h:'La blonde perfectionniste, journaliste'},
+      {w:'JASON',  h:'Le frère de Cheryl retrouvé mort'},
+      {w:'CRIME',  h:'Le moteur de tous les arcs narratifs'},
+      {w:'NUIT',   h:'La plupart des mystères se déroulent la…'},
+      {w:'KEVIN',  h:'Le meilleur ami de Betty, fils du shérif'},
+      {w:'PROM',   h:'La soirée de fin d\'année au lycée'},
+      {w:'JOSIE',  h:'La chanteuse des Pussycats'},
+      {w:'DINER',  h:'Le Pop\'s, lieu de réunion des ados'},
+      {w:'GANG',   h:'Groupe qui contrôle une partie de la ville'},
+      {w:'MEURTRE',h:'Ce qui est au cœur de la saison 1'},
+      {w:'BANDE',  h:'Archie en forme une de musique'},
+      {w:'NOIRE',  h:'La cerise du milkshake de Betty'},
+      {w:'RIVIERE',h:'La ville est construite le long d\'une…'},
+      {w:'LYCEE',  h:'Riverdale High, le lieu central'},
+    ],
+    normal:[
+      {w:'CHERYL',   h:'La Blossom aux cheveux rouges, reine du lycée'},
+      {w:'LODGE',    h:'Le nom de famille de Veronica'},
+      {w:'COOPER',   h:'Le nom de famille de Betty'},
+      {w:'MAPLE',    h:'La boisson sucrée emblématique de Riverdale'},
+      {w:'VIPER',    h:'Le gang de Jughead'},
+      {w:'SERIAL',   h:'Ce qu\'est le tueur de la saison 2'},
+      {w:'MASQUE',   h:'Ce que porte le Tueur à la Cagoule'},
+      {w:'POUPEE',   h:'Objet laissé par le Tueur en Série'},
+      {w:'COMPLOT',  h:'Ce que les adultes de Riverdale trament toujours'},
+      {w:'SHERIFF',  h:'Le père de Kevin, garant de la loi'},
+      {w:'JOURNAL',  h:'Ce que tient Betty depuis l\'enfance'},
+      {w:'ENQUETE',  h:'Ce que mène le groupe principal'},
+      {w:'FAMILLE',  h:'Tout tourne autour des rivalités entre…'},
+      {w:'TRAHISON', h:'Ce qui arrive inévitablement à chaque saison'},
+      {w:'CONFLIT',  h:'La constante de la vie à Riverdale'},
+    ],
+    hard:[
+      {w:'GARGOYLE',  h:'Le mystérieux roi du jeu de la saison 3'},
+      {w:'BLOSSOM',   h:'La famille la plus ancienne et mystérieuse'},
+      {w:'VERONICA',  h:'La brune sophistiquée, fille de Hiram Lodge'},
+      {w:'HIRAM',     h:'Le père de Veronica, grand criminel'},
+      {w:'JUGHEAD',   h:'L\'écrivain sarcastique au bonnet étrange'},
+      {w:'WARDEN',    h:'Le gardien de prison corrompu de la saison 3'},
+      {w:'GRIFFINS',  h:'Le jeu de rôle qui obsède Riverdale en saison 3'},
+    ]
+  }},
+  { id:'charmed', name:'Charmed', words:{
+    easy:[
+      {w:'PIPER',  h:'La sœur du milieu, gèle le temps'},
+      {w:'PHOEBE', h:'La plus jeune, a des prémonitions'},
+      {w:'DEMON',  h:'L\'ennemi principal des sœurs'},
+      {w:'MAGIE',  h:'Le pouvoir transmis de génération en génération'},
+      {w:'SORT',   h:'Formule prononcée pour activer un pouvoir'},
+      {w:'WYATT',  h:'Le fils de Piper, très puissant'},
+      {w:'CHRIS',  h:'Le deuxième fils de Piper, vient du futur'},
+      {w:'LIVRE',  h:'Le grimoire des sœurs Halliwell'},
+      {w:'ORBE',   h:'La façon dont les Blanchisseurs se déplacent'},
+      {w:'COLE',   h:'Le démon qui tombe amoureux de Phoebe'},
+      {w:'POUVOIR',h:'Ce que les sœurs développent au fil du temps'},
+      {w:'MANOR',  h:'La grande maison victorienne des Halliwell'},
+      {w:'NEXUS',  h:'Point de convergence des pouvoirs magiques'},
+      {w:'SORCIER',h:'Ce que sont les sœurs Halliwell'},
+      {w:'BIEN',   h:'La force que les sœurs représentent'},
+    ],
+    normal:[
+      {w:'PAIGE',    h:'La demi-sœur, déplace les objets'},
+      {w:'PRUE',     h:'L\'aînée, disparaît en saison 3'},
+      {w:'POTION',   h:'Préparation magique des sœurs Halliwell'},
+      {w:'BIANCHI',  h:'Le démon le plus puissant de la saison 4'},
+      {w:'FUTUR',    h:'Chris vient du… pour changer le présent'},
+      {w:'MIROIR',   h:'Objet magique qui peut piéger une âme'},
+      {w:'PROPHETE', h:'Celui qui annonce l\'avènement de Wyatt'},
+      {w:'ANCIEN',   h:'Les êtres qui surpassent même les Blanchisseurs'},
+      {w:'PORTAIL',  h:'Ce qui relie le monde mortel au monde magique'},
+      {w:'AVATAR',   h:'Les entités qui veulent transformer le monde'},
+      {w:'ANCETRE',  h:'Les premières Halliwell, sources de la magie'},
+      {w:'RITUEL',   h:'Ce que les sœurs accomplissent pour invoquer'},
+      {w:'TRIADE',   h:'Les trois démons qui commanditent Cole'},
+      {w:'GRIMOIRE', h:'Le livre de magie noire des démons'},
+      {w:'VOYANCE',  h:'Le pouvoir de prémonition de Phoebe'},
+    ],
+    hard:[
+      {w:'BELTHAZOR',h:'Le vrai nom de Cole Turner, demi-démon'},
+      {w:'PRESCOTT',  h:'Le nom de naissance de Prue, Piper et Phoebe'},
+      {w:'HALLIWELL', h:'Le nom de la famille des sœurs sorcières'},
+      {w:'SOURCIER',  h:'Celui qui guide les sorcières vers leur destin'},
+      {w:'TRIQUETRA', h:'Le symbole des trois sœurs sur le Livre des Ombres'},
+      {w:'BLANCHISS', h:'Les guides des sorcières dans le monde des mortels'},
+      {w:'POIGNARD',  h:'Arme habituelle des démons pour tuer'},
+    ]
+  }},
+  { id:'spn', name:'Supernatural', words:{
+    easy:[
+      {w:'DEAN',   h:'L\'aîné des Winchester, aime les voitures'},
+      {w:'SAM',    h:'Le cadet des Winchester, très grand'},
+      {w:'DEMON',  h:'La créature la plus courante chassée'},
+      {w:'ANGE',   h:'La nature de Castiel'},
+      {w:'ENFER',  h:'Là où Dean est envoyé à la fin de la saison 3'},
+      {w:'CROIX',  h:'Objet utilisé contre vampires et démons'},
+      {w:'LANCE',  h:'Arme utilisée pour tuer certaines créatures'},
+      {w:'ARME',   h:'Les frères en collectionnent de nombreuses'},
+      {w:'CHASSE', h:'L\'activité principale des frères Winchester'},
+      {w:'SALT',   h:'Utilisé pour protéger contre les esprits'},
+      {w:'PIEGE',  h:'Ce que les frères tendent aux créatures'},
+      {w:'PACTE',  h:'Ce que les démons proposent aux humains'},
+      {w:'RUINE',  h:'L\'état des lieux que les frères laissent parfois'},
+      {w:'PEUR',   h:'Ce que les monstres cherchent à inspirer'},
+      {w:'FUSIL',  h:'Arme chargée de munitions spéciales'},
+      {w:'COEUR',  h:'Ce qu\'on doit percer pour tuer un goule'},
+    ],
+    normal:[
+      {w:'BOBBY',    h:'Le père de substitution des frères'},
+      {w:'IMPALA',   h:'La voiture noire emblématique des frères'},
+      {w:'CASTIEL',  h:'L\'ange ami des frères Winchester'},
+      {w:'BUNKER',   h:'Le QG secret des Hommes de Lettres'},
+      {w:'MONSTRE',  h:'Ce que les frères traquent chaque épisode'},
+      {w:'LUCIFER',  h:'Le grand antagoniste des saisons 4 et 5'},
+      {w:'CROWLEY',  h:'Le roi des enfers, allié inattendu'},
+      {w:'SCEAU',    h:'Les 66 que Lilith veut briser'},
+      {w:'ORACLE',   h:'La prophétie que Chuck a écrite sur les frères'},
+      {w:'PORTAIL',  h:'Ce qui relie le monde des morts au monde des vivants'},
+      {w:'CHIFFRE',  h:'666, le nombre de la bête'},
+      {w:'SACRIFICE', h:'Ce que Sam est prêt à faire pour fermer l\'enfer'},
+      {w:'AMNESIA',  h:'Ce que subissent parfois les anges expulsés'},
+      {w:'TRAHISON', h:'Ce que Castiel fait aux frères en saison 6'},
+      {w:'RITUEL',   h:'Formule pour invoquer, piéger ou tuer'},
+    ],
+    hard:[
+      {w:'WINCHESTER', h:'Le nom de famille des frères chasseurs'},
+      {w:'METATRON',   h:'L\'ange scribe qui manipule tout le monde'},
+      {w:'LEVIATHAN',  h:'Les créatures que Castiel libère du Purgatorio'},
+      {w:'PURGATORY',  h:'L\'endroit entre ciel et enfer où va Dean'},
+      {w:'PROPHETE',   h:'Le rôle de Chuck Shurley dans la grande histoire'},
+      {w:'GARDIEN',    h:'Le rôle que Dean accepte à la fin'},
+      {w:'ARCHANGE',   h:'Michel, Gabriel, Raphaël, Lucifer : les quatre…'},
+    ]
+  }},
 ];
 
-// Normalize words
-function norm(s){ return s.toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Z]/g,''); }
+// Normalise
+function norm(s){return s.toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Z]/g,'');}
 SERIES.forEach(s=>{
-  const seen=new Set();
-  s.words=s.words.map(e=>({w:norm(e.w),h:e.h})).filter(e=>e.w.length>=4&&e.w.length<=7&&!seen.has(e.w)&&seen.add(e.w));
-});
-
-// ═══════════════════════════════════════════════════════
-// DIFFICULTY
-// ═══════════════════════════════════════════════════════
-const DIFF_GUESSES={easy:8,normal:6,hard:4};
-let difficulty='normal';
-
-document.querySelectorAll('.diff-chip').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    difficulty=btn.dataset.diff;
-    document.querySelectorAll('.diff-chip').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    buildSeriesSelect();
+  ['easy','normal','hard'].forEach(d=>{
+    const seen=new Set();
+    s.words[d]=s.words[d].map(e=>({w:norm(e.w),h:e.h})).filter(e=>e.w.length>=3&&e.w.length<=9&&!seen.has(e.w)&&seen.add(e.w));
   });
 });
 
-// ═══════════════════════════════════════════════════════
-// STORAGE HELPERS
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+// BADGES DEFINITION
+// ═══════════════════════════════════════════════
+const BADGES = [
+  {id:'first',    icon:'🌟', name:'Première victoire',   desc:'Remporte ta première partie',          check:st=>st.won>=1},
+  {id:'trio',     icon:'🔥', name:'En feu',              desc:'Gagne 3 parties d\'affilée',            check:st=>st.streak>=3},
+  {id:'week',     icon:'📅', name:'Semainier',           desc:'Joue 7 jours de suite',                check:st=>st.dayStreak>=7},
+  {id:'ten',      icon:'🎯', name:'Chasseur',            desc:'Remporte 10 parties au total',         check:st=>st.won>=10},
+  {id:'perfect',  icon:'💎', name:'Parfait',             desc:'Trouve un mot au premier essai',       check:st=>st.dist[1]>=1},
+  {id:'hard',     icon:'💀', name:'Sans pitié',          desc:'Gagne une partie en mode Expert',      check:st=>st.hardWins>=1},
+  {id:'allseries',icon:'🌈', name:'Sériephile',          desc:'Remporte au moins une victoire par série', check:st=>Object.keys(st.series||{}).filter(id=>st.series[id].won>=1).length>=5},
+  {id:'fifty',    icon:'🏆', name:'Champion',            desc:'Remporte 50 parties au total',         check:st=>st.won>=50},
+  {id:'speed',    icon:'⚡', name:'Éclair',              desc:'Gagne 3 parties en moins de 3 essais', check:st=>(st.dist[1]||0)+(st.dist[2]||0)>=3},
+  {id:'collector',icon:'📚', name:'Collectionneur',      desc:'Joue 30 parties au total',             check:st=>st.played>=30},
+  {id:'expert',   icon:'🎓', name:'Expert',              desc:'Gagne 5 parties en mode Expert',       check:st=>st.hardWins>=5},
+  {id:'daily',    icon:'☀️',  name:'Fidèle',              desc:'Joue 30 jours au total',               check:st=>st.played>=30},
+];
+
+// ═══════════════════════════════════════════════
+// STORAGE
+// ═══════════════════════════════════════════════
 function todayStr(){const d=new Date();return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;}
 
 function lsGet(k){try{const v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch(e){return null;}}
 function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 
-// Per-series word index (to advance beyond today's word when all solved)
-function getSeriesWordOffset(sid){return lsGet(`offset_${sid}`)||0;}
-function setSeriesWordOffset(sid,v){lsSet(`offset_${sid}`,v);}
-
-function getEntryForSeries(series){
-  let h=0;const str=todayStr()+series.id;
+// Series word rotation
+// We keep a per-series offset that advances each time all words of current
+// difficulty are solved today, OR when a new day starts.
+function getSeriesDay(sid){return lsGet(`sday_${sid}`)||{date:'',offset:0};}
+function getWordEntry(series,diff){
+  let sd=getSeriesDay(series.id);
+  const today=todayStr();
+  if(sd.date!==today){sd={date:today,offset:0};lsSet(`sday_${series.id}`,sd);}
+  let h=0;const str=today+series.id+diff;
   for(let i=0;i<str.length;i++)h=(h*31+str.charCodeAt(i))>>>0;
-  const offset=getSeriesWordOffset(series.id);
-  return series.words[(h+offset)%series.words.length];
+  const pool=series.words[diff];
+  return pool[(h+sd.offset)%pool.length];
+}
+function advanceSeriesOffset(sid){
+  const sd=getSeriesDay(sid);
+  sd.offset=(sd.offset||0)+1;
+  lsSet(`sday_${sid}`,sd);
 }
 
-function storageKey(sid){return `wstate_${sid}_${todayStr()}_${difficulty}_${getSeriesWordOffset(sid)}`;}
+const DIFF_MAX={easy:8,normal:6,hard:4};
+let difficulty='normal';
 
-function saveGameState(){
-  if(!currentSeries)return;
+function stateKey(sid,diff){
+  const sd=getSeriesDay(sid);
+  return `wgame_${sid}_${diff}_${todayStr()}_${sd.offset}`;
+}
+
+function saveGame(){
+  if(!G.series)return;
   const guesses=[];
-  for(let r=0;r<=currentRow&&r<maxGuesses;r++){
+  for(let r=0;r<=G.row&&r<G.maxTries;r++){
     const row=[];
-    for(let c=0;c<wordLen;c++){
+    for(let c=0;c<G.wordLen;c++){
       const el=document.getElementById(`cell-${r}-${c}`);
       const cls=[...el.classList].filter(x=>['correct','present','absent','filled'].includes(x)).join(' ');
-      row.push({letter:el.textContent,cls});
+      row.push({l:el.textContent,s:cls});
     }
     guesses.push(row);
   }
-  lsSet(storageKey(currentSeries.id),{guesses,currentRow,currentCol,gameOver,keyState,targetWord,hints:[...revealedHints]});
+  lsSet(stateKey(G.series.id,difficulty),{guesses,row:G.row,col:G.col,over:G.over,keys:G.keys,word:G.word,hints:[...G.hints]});
 }
 
-function loadGameState(sid){return lsGet(storageKey(sid));}
+function loadGame(sid,diff){return lsGet(stateKey(sid,diff));}
 
 // Global stats
-function getStats(){return lsGet('global_stats')||{played:0,won:0,streak:0,bestStreak:0,dist:{1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0},series:{}};}
-function saveStats(st){lsSet('global_stats',st);}
-
-function getSeriesStats(sid){
-  const st=getStats();
-  if(!st.series[sid])st.series[sid]={played:0,won:0,streak:0,bestStreak:0,dist:{1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0}};
-  return st.series[sid];
+function getStats(){
+  return lsGet('stats_v2')||{played:0,won:0,streak:0,bestStreak:0,dayStreak:0,lastDay:'',hardWins:0,dist:{},series:{},earnedBadges:[]};
 }
+function saveStats(st){lsSet('stats_v2',st);}
 
-function recordResult(sid,won,attempts){
+function recordResult(sid,won,tries,diff){
   const st=getStats();
-  st.played++;
-  if(won){st.won++;st.streak++;if(st.streak>st.bestStreak)st.bestStreak=st.streak;st.dist[attempts]=(st.dist[attempts]||0)+1;}
-  else{st.streak=0;}
+  const today=todayStr();
+  // day streak
+  if(st.lastDay===today){/* same day */}
+  else if(st.lastDay){
+    const last=new Date(st.lastDay.replace(/-/g,','));
+    const now=new Date();
+    const diff2=(now-last)/(1000*60*60*24);
+    st.dayStreak=diff2<=1.5?(st.dayStreak||0)+1:1;
+  }else{st.dayStreak=1;}
+  st.lastDay=today;
+  st.played=(st.played||0)+1;
+  if(won){
+    st.won=(st.won||0)+1;
+    st.streak=(st.streak||0)+1;
+    if(st.streak>(st.bestStreak||0))st.bestStreak=st.streak;
+    if(!st.dist)st.dist={};
+    st.dist[tries]=(st.dist[tries]||0)+1;
+    if(diff==='hard')st.hardWins=(st.hardWins||0)+1;
+  }else{st.streak=0;}
   if(!st.series)st.series={};
-  if(!st.series[sid])st.series[sid]={played:0,won:0,streak:0,bestStreak:0,dist:{1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0}};
+  if(!st.series[sid])st.series[sid]={played:0,won:0,streak:0,dist:{}};
   st.series[sid].played++;
-  if(won){st.series[sid].won++;st.series[sid].streak++;if(st.series[sid].streak>st.series[sid].bestStreak)st.series[sid].bestStreak=st.series[sid].streak;st.series[sid].dist[attempts]=(st.series[sid].dist[attempts]||0)+1;}
+  if(won){st.series[sid].won++;st.series[sid].streak=(st.series[sid].streak||0)+1;st.series[sid].dist[tries]=(st.series[sid].dist[tries]||0)+1;}
   else st.series[sid].streak=0;
   saveStats(st);
+  return checkNewBadges(st);
 }
 
-// ═══════════════════════════════════════════════════════
-// SCREENS
-// ═══════════════════════════════════════════════════════
+function checkNewBadges(st){
+  if(!st.earnedBadges)st.earnedBadges=[];
+  const newOnes=[];
+  BADGES.forEach(b=>{
+    if(!st.earnedBadges.includes(b.id)&&b.check(st)){
+      st.earnedBadges.push(b.id);
+      newOnes.push(b);
+    }
+  });
+  if(newOnes.length)saveStats(st);
+  return newOnes;
+}
+
+// ═══════════════════════════════════════════════
+// SCREEN MANAGEMENT
+// ═══════════════════════════════════════════════
+let prevScreen='screen-select';
 function showScreen(id){
+  if(!['screen-intro','screen-select'].includes(id))prevScreen=document.querySelector('.screen.active')?.id||'screen-select';
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
 
-// ═══════════════════════════════════════════════════════
-// SERIES SELECT
-// ═══════════════════════════════════════════════════════
-function buildSeriesSelect(){
+// ═══════════════════════════════════════════════
+// SELECT SCREEN
+// ═══════════════════════════════════════════════
+function buildSelect(){
+  document.getElementById('sel-date').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+  // Progress
+  let solved=0;
+  SERIES.forEach(s=>{
+    const saved=loadGame(s.id,difficulty);
+    const entry=getWordEntry(s,difficulty);
+    if(saved&&saved.over&&saved.word===entry.w&&saved.guesses.some(r=>r.every(c=>c.s.includes('correct'))))solved++;
+  });
+  document.getElementById('prog-fill').style.width=`${solved/SERIES.length*100}%`;
+  document.getElementById('prog-nums').textContent=`${solved} / ${SERIES.length} séries résolues`;
+
   const list=document.getElementById('series-list');
   list.innerHTML='';
   SERIES.forEach(s=>{
-    const entry=getEntryForSeries(s);
-    const saved=loadGameState(s.id);
-    const done=saved&&saved.gameOver&&saved.targetWord===entry.w;
+    const entry=getWordEntry(s,difficulty);
+    const saved=loadGame(s.id,difficulty);
+    const isDone=saved&&saved.over&&saved.word===entry.w;
+    const isWon=isDone&&saved.guesses.some(r=>r.every(c=>c.s.includes('correct')));
     const btn=document.createElement('button');
-    btn.className='series-btn'+(done?' done':'');
-    let badge='';
-    if(done){
-      // Check if won
-      const won=saved.guesses.some(row=>row.every(c=>c.cls.includes('correct')));
-      badge=won?'<span class="series-badge">✅</span>':'<span class="series-badge">❌</span>';
-    }
-    btn.innerHTML=`
-      <div class="series-btn-left">
-        <div class="series-btn-name">${s.name}</div>
-        <div class="series-btn-sub">${done?(badge.includes('✅')?'Trouvé aujourd\'hui':'Raté aujourd\'hui'):`${entry.w.length} lettres`}</div>
-      </div>
-      <div class="series-btn-right">${badge}<div class="series-btn-arrow">›</div></div>`;
+    btn.className='sbtn'+(isWon?' won':isDone?' lost':'');
+    const badge=isWon?'✅':isDone?'❌':'';
+    const sub=isWon?'Trouvé ✓':isDone?'Raté — réessayer ?':`${entry.w.length} lettres · ${difficulty==='easy'?'Facile':difficulty==='normal'?'Normal':'Expert'}`;
+    btn.innerHTML=`<div class="series-btn-left"><div class="sname">${s.name}</div><div class="ssub">${sub}</div></div><div style="display:flex;align-items:center;gap:4px">${badge?`<span class="sbadge">${badge}</span>`:''}<span class="sarrow">›</span></div>`;
     btn.addEventListener('click',()=>startGame(s));
     list.appendChild(btn);
   });
+
+  // Check if all solved → show "all done" message
+  if(solved===SERIES.length){
+    const notice=document.createElement('div');
+    notice.style.cssText='margin:12px 0;padding:14px 16px;background:rgba(201,169,110,.1);border:1px solid rgba(201,169,110,.3);border-radius:12px;text-align:center;font-size:13px;color:#c9a96e;line-height:1.5';
+    notice.innerHTML='🎉 Toutes les séries résolues aujourd\'hui !<br><span style="font-size:11px;color:#888899;margin-top:4px;display:block">Les mots avancent automatiquement demain</span>';
+    list.appendChild(notice);
+  }
 }
 
-// ═══════════════════════════════════════════════════════
-// GAME STATE
-// ═══════════════════════════════════════════════════════
-let currentSeries=null,targetWord='',targetHint='',wordLen=0,maxGuesses=6;
-let currentRow=0,currentCol=0,currentGuess=[],gameOver=false,keyState={},revealedHints=new Set();
-let resultEmojis=[];
+document.querySelectorAll('.dc').forEach(b=>b.addEventListener('click',()=>{
+  difficulty=b.dataset.d;
+  document.querySelectorAll('.dc').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');
+  buildSelect();
+}));
+
+// ═══════════════════════════════════════════════
+// GAME ENGINE
+// ═══════════════════════════════════════════════
+const G={series:null,word:'',hint:'',wordLen:0,maxTries:6,row:0,col:0,guess:[],over:false,keys:{},hints:new Set(),emojis:[]};
 
 function startGame(series){
-  currentSeries=series;
-  const entry=getEntryForSeries(series);
-  targetWord=entry.w;targetHint=entry.h;wordLen=targetWord.length;
-  maxGuesses=DIFF_GUESSES[difficulty];
-  currentRow=0;currentCol=0;currentGuess=[];gameOver=false;keyState={};revealedHints=new Set();resultEmojis=[];
+  const entry=getWordEntry(series,difficulty);
+  G.series=series;G.word=entry.w;G.hint=entry.h;G.wordLen=entry.w.length;
+  G.maxTries=DIFF_MAX[difficulty];G.row=0;G.col=0;G.guess=[];G.over=false;G.keys={};G.hints=new Set();G.emojis=[];
 
-  document.getElementById('header-series-name').textContent=series.name;
-  document.getElementById('header-date').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
-  document.getElementById('theme-hint').innerHTML=`💬 ${targetHint}<br><span class="diff-badge ${difficulty}">${difficulty==='easy'?'Facile':difficulty==='normal'?'Normal':'Hardcore'} · ${maxGuesses} essais</span>`;
+  document.getElementById('g-sname').textContent=series.name;
+  document.getElementById('g-date').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+  document.getElementById('g-hint').innerHTML=`💬 ${entry.h}<br><span class="dbadge ${difficulty}">${difficulty==='easy'?'Facile':difficulty==='normal'?'Normal':'Expert'} · ${G.maxTries} essais</span>`;
 
-  buildGrid();buildKeyboard();
+  buildGrid();buildKbd();
   showScreen('screen-game');
 
-  const saved=loadGameState(series.id);
-  if(saved&&saved.targetWord===targetWord)restoreGame(saved);
+  const saved=loadGame(series.id,difficulty);
+  if(saved&&saved.word===G.word)restoreGame(saved);
 }
 
 function buildGrid(){
   const grid=document.getElementById('grid');grid.innerHTML='';
-  const cs=wordLen<=5?54:wordLen===6?48:42;
-  for(let r=0;r<maxGuesses;r++){
-    const row=document.createElement('div');row.className='grid-row';row.id=`row-${r}`;
-    for(let c=0;c<wordLen;c++){
-      const cell=document.createElement('div');cell.className='grid-cell';cell.id=`cell-${r}-${c}`;
-      cell.style.cssText=`width:${cs}px;height:${cs}px;font-size:${cs>=54?'21px':cs>=48?'19px':'16px'}`;
+  const cs=G.wordLen<=4?58:G.wordLen===5?54:G.wordLen===6?48:42;
+  const fs=G.wordLen<=4?'22px':G.wordLen===5?'20px':G.wordLen===6?'18px':'15px';
+  for(let r=0;r<G.maxTries;r++){
+    const row=document.createElement('div');row.className='grow';row.id=`row-${r}`;
+    for(let c=0;c<G.wordLen;c++){
+      const cell=document.createElement('div');cell.className='gcell';cell.id=`cell-${r}-${c}`;
+      cell.style.cssText=`width:${cs}px;height:${cs}px;font-size:${fs}`;
       row.appendChild(cell);
     }
     grid.appendChild(row);
   }
-  highlightRow();
+  markActiveRow();
 }
 
-function buildKeyboard(){
-  const kb=document.getElementById('keyboard');kb.innerHTML='';
+function buildKbd(){
+  const kb=document.getElementById('kbd');kb.innerHTML='';
   [['A','Z','E','R','T','Y','U','I','O','P'],['Q','S','D','F','G','H','J','K','L','M'],['ENTER','W','X','C','V','B','N','⌫']].forEach(row=>{
-    const rowEl=document.createElement('div');rowEl.className='key-row';
+    const r=document.createElement('div');r.className='krow';
     row.forEach(k=>{
-      const btn=document.createElement('button');btn.className='key'+(k.length>1?' wide':'');
-      btn.textContent=k==='ENTER'?'↵':k;btn.dataset.key=k;
-      btn.addEventListener('click',()=>handleKey(k));rowEl.appendChild(btn);
+      const b=document.createElement('button');b.className='key'+(k.length>1?' wide':'');
+      b.textContent=k==='ENTER'?'↵':k;b.dataset.key=k;
+      b.addEventListener('click',()=>handleKey(k));r.appendChild(b);
     });
-    kb.appendChild(rowEl);
+    kb.appendChild(r);
   });
 }
 
-function highlightRow(){
-  document.querySelectorAll('.grid-cell').forEach(c=>c.classList.remove('active-row'));
-  if(currentRow<maxGuesses&&!gameOver)for(let c=0;c<wordLen;c++)document.getElementById(`cell-${currentRow}-${c}`)?.classList.add('active-row');
+function markActiveRow(){
+  document.querySelectorAll('.gcell').forEach(c=>c.classList.remove('active'));
+  if(G.row<G.maxTries&&!G.over)for(let c=0;c<G.wordLen;c++)document.getElementById(`cell-${G.row}-${c}`)?.classList.add('active');
 }
 
 function handleKey(k){
-  if(gameOver)return;
+  if(G.over)return;
   if(k==='⌫'||k==='BACKSPACE')delLetter();
   else if(k==='ENTER')submitGuess();
   else if(/^[A-Z]$/.test(k))addLetter(k);
 }
 
 function addLetter(l){
-  if(currentCol>=wordLen)return;
-  const cell=document.getElementById(`cell-${currentRow}-${currentCol}`);
+  if(G.col>=G.wordLen)return;
+  const cell=document.getElementById(`cell-${G.row}-${G.col}`);
   cell.textContent=l;cell.classList.add('filled','pop');
   setTimeout(()=>cell.classList.remove('pop'),120);
-  currentGuess.push(l);currentCol++;
+  G.guess.push(l);G.col++;
 }
 
 function delLetter(){
-  if(currentCol<=0)return;currentCol--;currentGuess.pop();
-  const cell=document.getElementById(`cell-${currentRow}-${currentCol}`);
+  if(G.col<=0)return;G.col--;G.guess.pop();
+  const cell=document.getElementById(`cell-${G.row}-${G.col}`);
   cell.textContent='';cell.classList.remove('filled');
 }
 
 function submitGuess(){
-  if(currentCol<wordLen){showMsg('Mot trop court');shakeRow();return;}
-  const guess=currentGuess.join('');
-  const result=scoreGuess(guess,targetWord);
-  revealRow(currentRow,result,()=>{
-    updateKeyboard(guess,result);
-    // Build emoji row
-    resultEmojis.push(result.map(r=>r==='correct'?'🟩':r==='present'?'🟧':'🟥').join(''));
+  if(G.col<G.wordLen){showMsg('Mot trop court');shakeRow();return;}
+  const guess=G.guess.join('');
+  const result=score(guess,G.word);
+  revealRow(G.row,result,()=>{
+    updateKbd(guess,result);
+    G.emojis.push(result.map(r=>r==='correct'?'🟩':r==='present'?'🟧':'🟥').join(''));
     const won=result.every(r=>r==='correct');
     if(won){
-      gameOver=true;
-      recordResult(currentSeries.id,true,currentRow+1);
-      saveGameState();
-      setTimeout(()=>{launchConfetti();showEnd(true,currentRow+1);},500);
+      G.over=true;
+      const newBadges=recordResult(G.series.id,true,G.row+1,difficulty);
+      saveGame();
+      setTimeout(()=>{launchConfetti();showEndScreen(true,G.row+1,newBadges);},500);
       return;
     }
-    currentRow++;currentCol=0;currentGuess=[];
-    if(currentRow>=maxGuesses){
-      gameOver=true;
-      recordResult(currentSeries.id,false,maxGuesses);
-      saveGameState();
-      setTimeout(()=>showEnd(false,maxGuesses),500);
+    G.row++;G.col=0;G.guess=[];
+    if(G.row>=G.maxTries){
+      G.over=true;
+      recordResult(G.series.id,false,G.maxTries,difficulty);
+      saveGame();
+      setTimeout(()=>showEndScreen(false,G.maxTries,[]),500);
       return;
     }
-    highlightRow();saveGameState();
+    markActiveRow();saveGame();
   });
 }
 
-function scoreGuess(guess,target){
-  const result=Array(target.length).fill('absent');
-  const tArr=target.split(''),gArr=guess.split(''),used=Array(target.length).fill(false);
-  for(let i=0;i<target.length;i++)if(gArr[i]===tArr[i]){result[i]='correct';used[i]=true;gArr[i]=null;}
+function score(guess,target){
+  const res=Array(target.length).fill('absent');
+  const tA=target.split(''),gA=guess.split(''),used=Array(target.length).fill(false);
+  for(let i=0;i<target.length;i++)if(gA[i]===tA[i]){res[i]='correct';used[i]=true;gA[i]=null;}
   for(let i=0;i<target.length;i++){
-    if(result[i]==='correct')continue;
-    const idx=tArr.findIndex((t,j)=>!used[j]&&t===gArr[i]);
-    if(idx!==-1){result[i]='present';used[idx]=true;}
+    if(res[i]==='correct')continue;
+    const idx=tA.findIndex((t,j)=>!used[j]&&t===gA[i]);
+    if(idx!==-1){res[i]='present';used[idx]=true;}
   }
-  return result;
+  return res;
 }
 
 function revealRow(row,result,cb){
-  const delay=300;
+  const delay=280;
   result.forEach((r,i)=>{
     setTimeout(()=>{
       const cell=document.getElementById(`cell-${row}-${i}`);
-      cell.classList.remove('active-row');cell.classList.add('flip');
+      cell.classList.remove('active');cell.classList.add('flip');
       setTimeout(()=>{cell.classList.add(r);cell.classList.remove('flip','filled');},delay/2);
     },i*delay);
   });
-  setTimeout(cb,result.length*delay+150);
+  setTimeout(cb,result.length*delay+120);
 }
 
-function updateKeyboard(guess,result){
+function updateKbd(guess,result){
   const p={correct:3,present:2,absent:1};
   guess.split('').forEach((l,i)=>{
-    const cur=keyState[l],nxt=result[i];
-    if(!cur||p[nxt]>p[cur])keyState[l]=nxt;
+    const cur=G.keys[l],nxt=result[i];
+    if(!cur||p[nxt]>p[cur])G.keys[l]=nxt;
   });
-  document.querySelectorAll('.key').forEach(btn=>{
-    const k=btn.dataset.key;
-    if(keyState[k]){btn.classList.remove('correct','present','absent');btn.classList.add(keyState[k]);}
+  document.querySelectorAll('.key').forEach(b=>{
+    const k=b.dataset.key;
+    if(G.keys[k]){b.classList.remove('correct','present','absent');b.classList.add(G.keys[k]);}
   });
 }
 
 function shakeRow(){
-  for(let c=0;c<wordLen;c++){const cell=document.getElementById(`cell-${currentRow}-${c}`);cell.classList.add('shake');setTimeout(()=>cell.classList.remove('shake'),400);}
+  for(let c=0;c<G.wordLen;c++){const cell=document.getElementById(`cell-${G.row}-${c}`);cell.classList.add('shake');setTimeout(()=>cell.classList.remove('shake'),400);}
 }
 
-let msgTimer=null;
+let msgT=null;
 function showMsg(text){
-  const el=document.getElementById('msg');el.textContent=text;el.classList.add('show');
-  if(msgTimer)clearTimeout(msgTimer);
-  msgTimer=setTimeout(()=>el.classList.remove('show'),1800);
+  const el=document.getElementById('msg');el.textContent=text;el.classList.add('on');
+  if(msgT)clearTimeout(msgT);
+  msgT=setTimeout(()=>el.classList.remove('on'),1800);
 }
 
 function restoreGame(saved){
   saved.guesses.forEach((row,r)=>{
     row.forEach((cell,c)=>{
       const el=document.getElementById(`cell-${r}-${c}`);if(!el)return;
-      el.textContent=cell.letter;
-      el.classList.remove('correct','present','absent','filled','active-row');
-      if(cell.cls)cell.cls.split(' ').filter(Boolean).forEach(cl=>el.classList.add(cl));
+      el.textContent=cell.l;
+      el.classList.remove('correct','present','absent','filled','active');
+      if(cell.s)cell.s.split(' ').filter(Boolean).forEach(cl=>el.classList.add(cl));
     });
   });
-  currentRow=saved.currentRow;currentCol=saved.currentCol??0;
-  gameOver=saved.gameOver;keyState=saved.keyState||{};revealedHints=new Set(saved.hints||[]);
-  currentGuess=[];
-  if(!gameOver)for(let c=0;c<currentCol;c++){const el=document.getElementById(`cell-${currentRow}-${c}`);if(el&&el.textContent)currentGuess.push(el.textContent);}
-  document.querySelectorAll('.key').forEach(btn=>{
-    const k=btn.dataset.key;
-    if(keyState[k]){btn.classList.remove('correct','present','absent');btn.classList.add(keyState[k]);}
+  G.row=saved.row;G.col=saved.col??0;G.over=saved.over;G.keys=saved.keys||{};G.hints=new Set(saved.hints||[]);
+  G.guess=[];
+  if(!G.over)for(let c=0;c<G.col;c++){const el=document.getElementById(`cell-${G.row}-${c}`);if(el&&el.textContent)G.guess.push(el.textContent);}
+  // Rebuild emojis
+  G.emojis=[];
+  const limit=G.over?saved.guesses.length:G.row;
+  for(let r=0;r<limit;r++){
+    const row=saved.guesses[r];if(!row)continue;
+    G.emojis.push(row.map(c=>c.s.includes('correct')?'🟩':c.s.includes('present')?'🟧':'🟥').join(''));
+  }
+  document.querySelectorAll('.key').forEach(b=>{
+    const k=b.dataset.key;
+    if(G.keys[k]){b.classList.remove('correct','present','absent');b.classList.add(G.keys[k]);}
   });
-  // Rebuild resultEmojis from saved guesses
-  resultEmojis=[];
-  for(let r=0;r<(gameOver?saved.guesses.length:currentRow);r++){
-    const row=saved.guesses[r];
-    if(!row)continue;
-    resultEmojis.push(row.map(c=>c.cls.includes('correct')?'🟩':c.cls.includes('present')?'🟧':'🟥').join(''));
-  }
-  if(gameOver){
-    const lastR=currentRow>0?currentRow-1:0;
+  if(G.over){
+    const lr=Math.max(G.row-1,0);
     let won=true;
-    for(let c=0;c<wordLen;c++)if(!document.getElementById(`cell-${lastR}-${c}`)?.classList.contains('correct')){won=false;break;}
-    setTimeout(()=>showEnd(won,currentRow),200);return;
+    for(let c=0;c<G.wordLen;c++)if(!document.getElementById(`cell-${lr}-${c}`)?.classList.contains('correct')){won=false;break;}
+    setTimeout(()=>showEndScreen(won,G.row,[]),200);return;
   }
-  highlightRow();
+  markActiveRow();
 }
 
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 // END SCREEN
-// ═══════════════════════════════════════════════════════
-function showEnd(won,attempts){
-  document.getElementById('end-eyebrow').textContent=won?'Bravo !':'Dommage…';
-  document.getElementById('end-title').textContent=won?(attempts===1?'Parfait !':attempts<=3?'Excellent !':'Bien joué !'):'Perdu';
-  document.getElementById('end-word').textContent=`Le mot était · ${targetWord}`;
-  const st=getSeriesStats(currentSeries.id);
-  document.getElementById('stat-attempts').textContent=won?attempts:'✗';
-  document.getElementById('stat-streak').textContent=st.streak;
-  // Next word button
-  const allSolved=checkAllSeriesSolvedToday();
-  document.getElementById('end-next-word-btn').style.display=won&&allSolved?'block':'none';
+// ═══════════════════════════════════════════════
+function showEndScreen(won,tries,newBadges){
+  document.getElementById('end-ey').textContent=won?'Bravo !':'Dommage…';
+  document.getElementById('end-ttl').textContent=won?(tries===1?'Parfait !':tries<=2?'Excellent !':tries<=4?'Bien joué !':'Trouvé !'):'Perdu';
+  document.getElementById('end-word').textContent=`Le mot était · ${G.word}`;
+
+  // Mini result grid
+  const eg=document.getElementById('end-grid');eg.innerHTML='';
+  G.emojis.forEach(erow=>{
+    const row=document.createElement('div');row.className='end-erow';
+    erow.split('').forEach(e=>{
+      const cell=document.createElement('div');cell.className='end-ecell';
+      if(e==='🟩')cell.classList.add('correct');else if(e==='🟧')cell.classList.add('present');else cell.classList.add('absent');
+      row.appendChild(cell);
+    });
+    eg.appendChild(row);
+  });
+
+  const st=getStats();
+  document.getElementById('e-tries').textContent=won?tries:'✗';
+  document.getElementById('e-streak').textContent=st.streak||0;
+  document.getElementById('e-total').textContent=st.won||0;
+
+  // New badges
+  const nbb=document.getElementById('new-badges-box');
+  const nbl=document.getElementById('new-badges-list');
+  if(newBadges&&newBadges.length){
+    nbl.innerHTML=newBadges.map(b=>`<span class="ebn-badge" title="${b.name}">${b.icon}</span>`).join('');
+    nbb.style.display='block';
+  }else nbb.style.display='none';
+
+  // Next word button — only if all series solved today
+  const allSolved=SERIES.every(s=>{
+    const sv=loadGame(s.id,difficulty);
+    const en=getWordEntry(s,difficulty);
+    return sv&&sv.over&&sv.word===en.w&&sv.guesses.some(r=>r.every(c=>c.s.includes('correct')));
+  });
+  document.getElementById('btn-next-word').style.display=allSolved?'block':'none';
+
   showScreen('screen-end');
 }
 
-function checkAllSeriesSolvedToday(){
-  return SERIES.every(s=>{
-    const saved=loadGameState(s.id);
-    return saved&&saved.gameOver&&saved.guesses.some(row=>row.every(c=>c.cls.includes('correct')));
-  });
-}
-
-document.getElementById('end-share-btn').addEventListener('click',()=>{
-  const diff=difficulty==='easy'?'Facile':difficulty==='normal'?'Normal':'Hardcore';
-  const text=`${currentSeries.name} · ${diff}\n${targetWord} · ${resultEmojis.length}/${maxGuesses}\n${resultEmojis.join('\n')}`;
-  if(navigator.share){navigator.share({text});}
-  else if(navigator.clipboard){navigator.clipboard.writeText(text).then(()=>showMsg('Copié !'));}
+document.getElementById('btn-share').addEventListener('click',()=>{
+  const d=difficulty==='easy'?'Facile':difficulty==='normal'?'Normal':'Expert';
+  const text=`${G.series.name} · Wordle · ${d}\n${G.word} · ${G.emojis.length}/${G.maxTries}\n${G.emojis.join('\n')}`;
+  if(navigator.share)navigator.share({text});
+  else if(navigator.clipboard)navigator.clipboard.writeText(text).then(()=>showMsg('Copié !'));
   else showMsg('Non supporté');
 });
 
-document.getElementById('end-next-word-btn').addEventListener('click',()=>{
-  // Advance offset for all series
-  SERIES.forEach(s=>{
-    const offset=getSeriesWordOffset(s.id);
-    setSeriesWordOffset(s.id,offset+1);
-    // Clear old state
-    try{localStorage.removeItem(storageKey(s.id));}catch(e){}
-  });
-  buildSeriesSelect();
-  showScreen('screen-select');
+document.getElementById('btn-next-word').addEventListener('click',()=>{
+  SERIES.forEach(s=>advanceSeriesOffset(s.id));
+  buildSelect();showScreen('screen-select');
 });
 
-document.getElementById('end-back-btn').addEventListener('click',()=>{buildSeriesSelect();showScreen('screen-select');});
+document.getElementById('btn-end-back').addEventListener('click',()=>{buildSelect();showScreen('screen-select');});
 
-// ═══════════════════════════════════════════════════════
-// HINTS
-// ═══════════════════════════════════════════════════════
-document.getElementById('hint-btn').addEventListener('click',()=>{
-  const container=document.getElementById('hint-letters');container.innerHTML='';
-  targetWord.split('').forEach((letter,i)=>{
-    const el=document.createElement('div');el.className='hint-letter'+(revealedHints.has(i)?' revealed':'');
-    el.innerHTML=`<div class="hint-letter-pos">${i+1}</div><div class="hint-letter-char">${revealedHints.has(i)?letter:'·'}</div>`;
-    el.addEventListener('click',()=>{
-      revealedHints.add(i);el.classList.add('revealed');
-      el.querySelector('.hint-letter-char').textContent=letter;
-      saveGameState();
-    });
-    container.appendChild(el);
+// ═══════════════════════════════════════════════
+// HINT
+// ═══════════════════════════════════════════════
+document.getElementById('btn-hint').addEventListener('click',()=>{
+  const c=document.getElementById('hletters');c.innerHTML='';
+  G.word.split('').forEach((letter,i)=>{
+    const el=document.createElement('div');el.className='hletter'+(G.hints.has(i)?' rev':'');
+    el.innerHTML=`<div class="hlpos">${i+1}</div><div class="hlchar">${G.hints.has(i)?letter:'·'}</div>`;
+    el.addEventListener('click',()=>{G.hints.add(i);el.classList.add('rev');el.querySelector('.hlchar').textContent=letter;saveGame();});
+    c.appendChild(el);
   });
-  document.getElementById('hint-overlay').classList.add('open');
+  document.getElementById('hint-ov').classList.add('on');
 });
-document.getElementById('hint-close').addEventListener('click',()=>document.getElementById('hint-overlay').classList.remove('open'));
-document.getElementById('hint-overlay').addEventListener('click',e=>{if(e.target===document.getElementById('hint-overlay'))document.getElementById('hint-overlay').classList.remove('open');});
+document.getElementById('btn-hint-close').addEventListener('click',()=>document.getElementById('hint-ov').classList.remove('on'));
+document.getElementById('hint-ov').addEventListener('click',e=>{if(e.target===document.getElementById('hint-ov'))document.getElementById('hint-ov').classList.remove('on');});
 
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+// CONFIRM BACK
+// ═══════════════════════════════════════════════
+document.getElementById('btn-back').addEventListener('click',()=>{
+  if(!G.over&&G.row>0){document.getElementById('confirm-ov').classList.add('on');}
+  else{buildSelect();showScreen('screen-select');}
+});
+document.getElementById('btn-confirm-yes').addEventListener('click',()=>{
+  document.getElementById('confirm-ov').classList.remove('on');
+  buildSelect();showScreen('screen-select');
+});
+document.getElementById('btn-confirm-no').addEventListener('click',()=>document.getElementById('confirm-ov').classList.remove('on'));
+
+// ═══════════════════════════════════════════════
 // GUESS THE SERIES
-// ═══════════════════════════════════════════════════════
-let gtsQuestions=[],gtsIndex=0,gtsScore=0;
+// ═══════════════════════════════════════════════
+let GTS={questions:[],idx:0,score:0};
 
-function buildGtsQuestions(){
-  // Pick random words from all series
+function buildGtsPool(){
   const pool=[];
-  SERIES.forEach(s=>s.words.forEach(e=>pool.push({word:e.w,hint:e.h,series:s.name,sid:s.id})));
-  // Shuffle
+  SERIES.forEach(s=>['easy','normal','hard'].forEach(d=>s.words[d].forEach(e=>pool.push({word:e.w,hint:e.h,series:s.name}))));
   for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
   return pool.slice(0,10);
 }
 
 function startGts(){
-  gtsQuestions=buildGtsQuestions();gtsIndex=0;gtsScore=0;
-  showGtsQuestion();showScreen('screen-gts');
+  GTS={questions:buildGtsPool(),idx:0,score:0};
+  showGtsQ();showScreen('screen-gts');
 }
 
-function showGtsQuestion(){
-  if(gtsIndex>=gtsQuestions.length){showGtsResult();return;}
-  const q=gtsQuestions[gtsIndex];
-  document.getElementById('gts-q-num').textContent=gtsIndex+1;
-  document.getElementById('gts-q-total').textContent=gtsQuestions.length;
+function showGtsQ(){
+  if(GTS.idx>=GTS.questions.length){endGts();return;}
+  const q=GTS.questions[GTS.idx];
+  document.getElementById('gts-qn').textContent=GTS.idx+1;
+  document.getElementById('gts-qt').textContent=GTS.questions.length;
   document.getElementById('gts-word').textContent=q.word;
-  document.getElementById('gts-hint-text').textContent=q.hint;
-  document.getElementById('gts-next-btn').style.display='none';
-  const choices=document.getElementById('gts-choices');choices.innerHTML='';
-  // Get 4 unique series names including correct one
+  document.getElementById('gts-hint').textContent=q.hint;
+  document.getElementById('btn-gts-next').style.display='none';
+  const ch=document.getElementById('gts-choices');ch.innerHTML='';
   const names=[q.series];
   const others=SERIES.map(s=>s.name).filter(n=>n!==q.series);
   for(let i=others.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[others[i],others[j]]=[others[j],others[i]];}
   names.push(...others.slice(0,3));
   for(let i=names.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[names[i],names[j]]=[names[j],names[i]];}
   names.forEach(name=>{
-    const btn=document.createElement('button');btn.className='gts-choice';btn.textContent=name;
-    btn.addEventListener('click',()=>{
-      choices.querySelectorAll('.gts-choice').forEach(b=>b.style.pointerEvents='none');
-      if(name===q.series){btn.classList.add('correct-ans');gtsScore++;}
-      else{btn.classList.add('wrong-ans');choices.querySelectorAll('.gts-choice').forEach(b=>{if(b.textContent===q.series)b.classList.add('correct-ans');});}
-      document.getElementById('gts-next-btn').style.display='block';
+    const b=document.createElement('button');b.className='gchoice';b.textContent=name;
+    b.addEventListener('click',()=>{
+      ch.querySelectorAll('.gchoice').forEach(x=>x.style.pointerEvents='none');
+      if(name===q.series){b.classList.add('ok');GTS.score++;}
+      else{b.classList.add('ko');ch.querySelectorAll('.gchoice').forEach(x=>{if(x.textContent===q.series)x.classList.add('ok');});}
+      document.getElementById('btn-gts-next').style.display='block';
     });
-    choices.appendChild(btn);
+    ch.appendChild(b);
   });
 }
 
-function showGtsResult(){
-  const pct=Math.round(gtsScore/gtsQuestions.length*100);
-  const title=pct===100?'Parfait !':pct>=70?'Très bien !':pct>=40?'Pas mal !':'À retravailler…';
-  document.getElementById('gts-word').textContent=`${gtsScore}/${gtsQuestions.length}`;
-  document.getElementById('gts-hint-text').textContent=`${pct}% · ${title}`;
+function endGts(){
+  const pct=Math.round(GTS.score/GTS.questions.length*100);
+  document.getElementById('gts-word').textContent=`${GTS.score}/${GTS.questions.length}`;
+  document.getElementById('gts-hint').textContent=pct===100?'🏆 Parfait !':pct>=70?'🎯 Très bien !':pct>=40?'👍 Pas mal !':'📚 À retravailler…';
   document.getElementById('gts-choices').innerHTML='';
-  document.getElementById('gts-q-num').textContent='🎉';
-  const nextBtn=document.getElementById('gts-next-btn');
-  nextBtn.textContent='Rejouer';nextBtn.style.display='block';
-  nextBtn.onclick=startGts;
+  document.getElementById('gts-qn').textContent='🎉';
+  const nb=document.getElementById('btn-gts-next');
+  nb.textContent='Rejouer';nb.style.display='block';nb.onclick=startGts;
 }
 
-document.getElementById('gts-next-btn').addEventListener('click',()=>{gtsIndex++;showGtsQuestion();});
-document.getElementById('gts-back-btn').addEventListener('click',()=>{buildSeriesSelect();showScreen('screen-select');});
-document.getElementById('gts-btn').addEventListener('click',startGts);
+document.getElementById('btn-gts-next').addEventListener('click',()=>{GTS.idx++;showGtsQ();});
+document.getElementById('btn-gts-back').addEventListener('click',()=>{buildSelect();showScreen('screen-select');});
+document.getElementById('btn-gts').addEventListener('click',startGts);
 
-// ═══════════════════════════════════════════════════════
-// STATS SCREEN
-// ═══════════════════════════════════════════════════════
-function buildStatsScreen(){
+// ═══════════════════════════════════════════════
+// STATS
+// ═══════════════════════════════════════════════
+function buildStats(){
   const st=getStats();
-  const body=document.getElementById('stats-body');
-  const winPct=st.played>0?Math.round(st.won/st.played*100):0;
-  let html=`<div class="stats-section"><div class="stats-section-title">Global</div>
-  <div class="stats-global">
-    <div class="stat-box"><div class="stat-box-num">${st.played}</div><div class="stat-box-label">Parties jouées</div></div>
-    <div class="stat-box"><div class="stat-box-num">${winPct}%</div><div class="stat-box-label">Victoires</div></div>
-    <div class="stat-box"><div class="stat-box-num">${st.streak}</div><div class="stat-box-label">Série actuelle</div></div>
-    <div class="stat-box"><div class="stat-box-num">${st.bestStreak}</div><div class="stat-box-label">Meilleure série</div></div>
+  const wp=st.played>0?Math.round(st.won/st.played*100):0;
+  let h=`<div class="ssec"><div class="ssec-title">Global</div>
+  <div class="sglobal">
+    <div class="sbox"><div class="sbox-n">${st.played||0}</div><div class="sbox-l">Parties</div></div>
+    <div class="sbox"><div class="sbox-n">${wp}%</div><div class="sbox-l">Victoires</div></div>
+    <div class="sbox"><div class="sbox-n">${st.streak||0}</div><div class="sbox-l">Série en cours</div></div>
+    <div class="sbox"><div class="sbox-n">${st.bestStreak||0}</div><div class="sbox-l">Meilleure série</div></div>
   </div></div>`;
-
-  // Global dist
-  const maxGD=Math.max(...Object.values(st.dist),1);
-  html+=`<div class="stats-section"><div class="stats-section-title">Distribution des essais</div><div class="stats-bars">`;
-  for(let i=1;i<=8;i++){
-    const v=st.dist[i]||0;const w=Math.max(8,Math.round(v/maxGD*100));
-    html+=`<div class="stats-bar-row"><div class="stats-bar-label">${i}</div><div class="stats-bar-fill${v>0?' highlight':''}" style="width:${w}%"><span class="stats-bar-count">${v}</span></div></div>`;
-  }
-  html+=`</div></div>`;
-
-  // Per-series
-  html+=`<div class="stats-section"><div class="stats-section-title">Par série</div>`;
+  const dist=st.dist||{};const maxD=Math.max(...[1,2,3,4,5,6,7,8].map(i=>dist[i]||0),1);
+  h+=`<div class="ssec"><div class="ssec-title">Distribution des essais</div>`;
+  for(let i=1;i<=8;i++){const v=dist[i]||0;const w=Math.max(8,Math.round(v/maxD*100));h+=`<div class="sbar-row"><div class="sbar-lbl">${i}</div><div class="sbar-fill${v?'  hi':''}" style="width:${w}%"><span class="sbar-cnt">${v}</span></div></div>`;}
+  h+=`</div>`;
+  h+=`<div class="ssec"><div class="ssec-title">Par série</div>`;
   SERIES.forEach(s=>{
-    const ss=st.series?.[s.id];if(!ss||ss.played===0)return;
+    const ss=st.series?.[s.id];if(!ss||!ss.played)return;
     const sp=Math.round(ss.won/ss.played*100);
-    const maxSD=Math.max(...Object.values(ss.dist),1);
-    html+=`<div class="stats-series-row"><div class="stats-series-name">${s.name} · ${ss.played} parties · ${sp}% victoires</div><div class="stats-bars">`;
-    for(let i=1;i<=8;i++){
-      const v=ss.dist[i]||0;const w=Math.max(8,Math.round(v/maxSD*100));
-      html+=`<div class="stats-bar-row"><div class="stats-bar-label">${i}</div><div class="stats-bar-fill${v>0?' highlight':''}" style="width:${w}%"><span class="stats-bar-count">${v}</span></div></div>`;
-    }
-    html+=`</div></div>`;
+    const maxS=Math.max(...[1,2,3,4,5,6,7,8].map(i=>(ss.dist||{})[i]||0),1);
+    h+=`<div class="sser-row"><div class="sser-name">${s.name} · ${ss.played} parties · ${sp}% victoires</div>`;
+    for(let i=1;i<=8;i++){const v=(ss.dist||{})[i]||0;const w=Math.max(8,Math.round(v/maxS*100));h+=`<div class="sbar-row"><div class="sbar-lbl">${i}</div><div class="sbar-fill${v?' hi':''}" style="width:${w}%"><span class="sbar-cnt">${v}</span></div></div>`;}
+    h+=`</div>`;
   });
-  html+=`</div>`;
-  body.innerHTML=html;
+  h+=`</div>`;
+  document.getElementById('stats-body').innerHTML=h;
 }
 
-document.getElementById('open-stats-btn').addEventListener('click',()=>{buildStatsScreen();showScreen('screen-stats');});
-document.getElementById('stats-close-btn').addEventListener('click',()=>{buildSeriesSelect();showScreen('screen-select');});
+document.getElementById('btn-stats').addEventListener('click',()=>{buildStats();showScreen('screen-stats');});
+document.getElementById('btn-stats-close').addEventListener('click',()=>{buildSelect();showScreen('screen-select');});
 
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+// BADGES
+// ═══════════════════════════════════════════════
+function buildBadges(){
+  const st=getStats();
+  const earned=st.earnedBadges||[];
+  let h=`<div class="ssec"><div class="ssec-title">Badges obtenus — ${earned.length} / ${BADGES.length}</div><div class="badges-grid">`;
+  BADGES.filter(b=>earned.includes(b.id)).forEach(b=>{h+=`<div class="badge-card earned"><div class="badge-icon">${b.icon}</div><div class="badge-info"><strong>${b.name}</strong><span>${b.desc}</span></div></div>`;});
+  h+=`</div></div>`;
+  h+=`<div class="ssec"><div class="ssec-title">À débloquer</div><div class="badges-grid">`;
+  BADGES.filter(b=>!earned.includes(b.id)).forEach(b=>{h+=`<div class="badge-card locked"><div class="badge-icon">${b.icon}</div><div class="badge-info"><strong>${b.name}</strong><span>${b.desc}</span></div></div>`;});
+  h+=`</div></div>`;
+  document.getElementById('badges-body').innerHTML=h;
+}
+
+document.getElementById('btn-badges').addEventListener('click',()=>{buildBadges();showScreen('screen-badges');});
+document.getElementById('btn-badges-close').addEventListener('click',()=>{buildSelect();showScreen('screen-select');});
+
+// ═══════════════════════════════════════════════
 // CONFETTI
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 function launchConfetti(){
-  const canvas=document.getElementById('confetti-canvas');
-  const ctx=canvas.getContext('2d');
-  canvas.width=window.innerWidth;canvas.height=window.innerHeight;
-  const pieces=[];
+  const cv=document.getElementById('cvs');const ctx=cv.getContext('2d');
+  cv.width=window.innerWidth;cv.height=window.innerHeight;
   const colors=['#c9a96e','#2d6e45','#b86d10','#f0ede8','#b8f0cc','#ffe0a0'];
-  for(let i=0;i<120;i++)pieces.push({
-    x:Math.random()*canvas.width,y:-10,
-    w:Math.random()*8+4,h:Math.random()*14+6,
+  const pieces=Array.from({length:130},()=>({
+    x:Math.random()*cv.width,y:-10,w:Math.random()*8+4,h:Math.random()*14+6,
     color:colors[Math.floor(Math.random()*colors.length)],
-    rot:Math.random()*360,vx:(Math.random()-0.5)*4,
-    vy:Math.random()*4+2,vr:Math.random()*6-3,alpha:1
-  });
-  let frame=0;
-  function draw(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
+    rot:Math.random()*360,vx:(Math.random()-.5)*4,vy:Math.random()*4+2,vr:Math.random()*6-3,alpha:1
+  }));
+  let f=0;
+  (function draw(){
+    ctx.clearRect(0,0,cv.width,cv.height);
     pieces.forEach(p=>{
-      p.x+=p.vx;p.y+=p.vy;p.rot+=p.vr;p.vy+=0.05;
-      if(frame>80)p.alpha=Math.max(0,p.alpha-0.02);
+      p.x+=p.vx;p.y+=p.vy;p.rot+=p.vr;p.vy+=.06;
+      if(f>80)p.alpha=Math.max(0,p.alpha-.018);
       ctx.save();ctx.globalAlpha=p.alpha;ctx.translate(p.x,p.y);ctx.rotate(p.rot*Math.PI/180);
       ctx.fillStyle=p.color;ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore();
     });
-    frame++;if(frame<160)requestAnimationFrame(draw);else ctx.clearRect(0,0,canvas.width,canvas.height);
-  }
-  draw();
+    f++;if(f<170)requestAnimationFrame(draw);else ctx.clearRect(0,0,cv.width,cv.height);
+  })();
 }
 
-// ═══════════════════════════════════════════════════════
-// NAVIGATION & INIT
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+// KEYBOARD
+// ═══════════════════════════════════════════════
 document.addEventListener('keydown',e=>{
-  if(document.getElementById('screen-game').classList.contains('active')){
-    if(e.key==='Backspace')handleKey('BACKSPACE');
-    else if(e.key==='Enter')handleKey('ENTER');
-    else if(/^[a-zA-Z]$/.test(e.key))handleKey(e.key.toUpperCase());
-  }
+  if(!document.getElementById('screen-game').classList.contains('active'))return;
+  if(document.getElementById('hint-ov').classList.contains('on'))return;
+  if(document.getElementById('confirm-ov').classList.contains('on'))return;
+  if(e.key==='Backspace')handleKey('BACKSPACE');
+  else if(e.key==='Enter')handleKey('ENTER');
+  else if(/^[a-zA-Z]$/.test(e.key))handleKey(e.key.toUpperCase());
 });
 
-document.getElementById('back-btn').addEventListener('click',()=>{buildSeriesSelect();showScreen('screen-select');});
-document.getElementById('intro-play-btn').addEventListener('click',()=>{buildSeriesSelect();showScreen('screen-select');});
-
-buildSeriesSelect();
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+document.getElementById('btn-intro').addEventListener('click',()=>{buildSelect();showScreen('screen-select');});
+buildSelect();
 </script>
-
 </body>
 </html>
